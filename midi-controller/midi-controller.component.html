@@ -1,5 +1,6 @@
 <div *ngIf="synthesizer && synthesizer.midi && synthesizer.midi.controllers"
      class="midi-controllers">
+  <h2 *ngIf="synthesizer.midi.controllers.length">MIDI devices</h2>
   <button class="midi-controller" *ngFor="let controller of synthesizer.midi.controllers"
        (click)="controller.toggleActive()"
        [ngClass]="{active:(controller.active)}"

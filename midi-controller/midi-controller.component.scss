@@ -5,5 +5,10 @@
 
   .midi-controller {
     flex: 1;
+    cursor: pointer;
+
+    &.active {
+      background: #00c8ff;
+    }
   }
 }

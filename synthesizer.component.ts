@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {  Component, OnInit } from '@angular/core';
 import { LFO, OSC, Synthesizer, SynthesizerService } from './synthesizer.service';
-import { AppService } from '../../core/services/app.service';
 
 
 @Component({
@@ -19,7 +18,7 @@ export class SynthesizerComponent implements OnInit {
   octaves = 4;
   connectLfo: LFO;
 
-  constructor(public app: AppService, public audioEditor: SynthesizerService, private ref: ChangeDetectorRef) {
+  constructor(public audioEditor: SynthesizerService) {
     this.synthesizer = new Synthesizer(3);
     if (this.synthesizer.oscs) {
       this.currentOsc = this.synthesizer.oscs[0];

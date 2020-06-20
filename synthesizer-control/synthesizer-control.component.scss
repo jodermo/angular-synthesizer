@@ -246,3 +246,12 @@ $slider_background: #ccc;
 
 }
 
+.hidden {
+  width: 0;
+  height: 0;
+  position: absolute;
+  opacity: 0;
+  z-index: -10;
+  pointer-events: none;
+}
+
