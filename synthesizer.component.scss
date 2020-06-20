@@ -1,0 +1,68 @@
+.synthesizer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .synthesizer-options {
+    .synthesizer-navigation {
+      display: flex;
+
+      & > * {
+        flex: 1;
+      }
+    }
+  }
+
+  .synthesizer-main {
+    position: relative;
+    flex: 1;
+
+    & > .inside {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      overflow-x: hidden;
+      overflow-y: scroll;
+
+      .synthesizer-oscs {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+
+
+        .synthesizer-osc {
+          flex: 1;
+
+        }
+      }
+
+      .synthesizer-lfos {
+        display: flex;
+        flex-direction: column;
+
+        .synthesizer-lfo {
+          flex: 1;
+        }
+      }
+
+      .synthesizer-osc-options {
+        flex: 1;
+
+
+        .synthesizer-osc-option {
+
+        }
+      }
+    }
+
+
+  }
+
+  .synthesizer-keyboard {
+
+  }
+
+}

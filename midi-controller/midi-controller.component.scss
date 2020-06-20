@@ -1,0 +1,9 @@
+.midi-controllers {
+  position: relative;
+  width: 100%;
+  display: flex;
+
+  .midi-controller {
+    flex: 1;
+  }
+}

@@ -1,0 +1,16 @@
+<div class="synthesizer-osc">
+  <label class="horizontal-flex">
+    <div class="checkbox-container">
+      <div class="checkbox" (click)="osc.toggleActive()" [ngClass]="{active:(osc.active)}"></div>
+    </div>
+    <h3 class="flex-item">OSC <span *ngIf="osc.id">{{osc.id}}</span></h3>
+  </label>
+  <div class="horizontal-flex">
+    <button class="flex-item" *ngFor="let waveform of osc.waveforms"
+            [ngClass]="{active:(waveform === osc.currentWaveform)}"
+            (click)="osc.waveform(waveform)"
+    >
+      {{waveform}}
+    </button>
+  </div>
+</div>

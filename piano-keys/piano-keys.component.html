@@ -1,0 +1,46 @@
+<div class="piano-keys"
+>
+  <div class="piano-keys-controls" *ngIf="latchControl || pitchControl">
+    <div *ngIf="latchControl" class="piano-keys-latch"
+         (click)="toggleLatch()"
+         [ngClass]="{active:(latch)}"
+    >
+      Latch
+    </div>
+    <div *ngIf="pitchControl" class="piano-keys-pitch"
+         (mousedown)="onPitchMouseDown($event)"
+         (mouseup)="onPitchMouseUp($event)"
+         (mouseleave)="onPitchMouseUp($event)"
+         (mousemove)="onPitchMouseMove($event)"
+    >
+      <div class="pitch-knob" [ngStyle]="{top:(pitchPosition) + '%'}"></div>
+
+    </div>
+  </div>
+  {{currentNote}} {{currentOctave}}
+  <div class="piano-keys-keyboard"
+       (mousedown)="mouseDown = true; onMouseMove(pressedKey, pressedOctave);"
+       (mouseup)="mouseDown = false; onMouseMove(pressedKey, pressedOctave);"
+       (mouseleave)="mouseDown = false; onMouseMove(pressedKey, pressedOctave);"
+  >
+    <div class="piano-keys-octave" *ngFor="let octave of [].constructor(octaves); let i = index">
+      <div *ngFor="let key of keys" class="piano-keys-key"
+           [ngClass]="{
+           'black-key':(isBlackKey(key)),
+           'pressed':(pressedKey === key && pressedOctave === i + 1),
+           'active':(currentNote && currentNote.toLowerCase() === key.toLowerCase() && currentOctave === i+1)}"
+           (mousemove)="onMouseMove(key, i+1)"
+           (mouseout)="onMouseMove(pressedKey, pressedOctave)"
+           (mousedown)="clickKey(key, i+1)"
+           (mouseup)="mouseDown = false;"
+      >
+        <div class="inside">
+          <div class="piano-keys-key-caption">
+            {{key}} <small>{{i}}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

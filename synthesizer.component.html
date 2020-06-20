@@ -1,0 +1,34 @@
+<div class="synthesizer" *ngIf="synthesizer">
+  <div class="synthesizer-options">
+    <app-midi-controller [synthesizer]="synthesizer"></app-midi-controller>
+    <app-synthesizer-settings [synthesizer]="synthesizer"></app-synthesizer-settings>
+  </div>
+  <div class="synthesizer-main">
+    <div class="inside">
+      <div class="synthesizer-oscs">
+        <div *ngFor="let osc of synthesizer.oscs; let i = index"
+             class="synthesizer-osc"
+             (click)="selectOsc(osc)"
+             [ngClass]="{selected:(currentOsc === osc)}"
+        >
+          <app-osc [osc]="osc"></app-osc>
+          <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+        </div>
+      </div>
+      <div class="synthesizer-lfos">
+        <div *ngFor="let lfo of synthesizer.lfos; let i = index"
+             class="synthesizer-lfo"
+             (click)="selectLfo(lfo)"
+             [ngClass]="{selected:(currentLfo === lfo)}"
+        >
+          <app-lfo [lfo]="lfo"></app-lfo>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="synthesizer-keyboard">
+    <app-piano-keys [synthesizer]="synthesizer" [currentNote]="synthesizer.currentNote" [currentOctave]="synthesizer.currentOctave"
+                    [octaves]="octaves" (onKeyDown)="pianoKeyDown($event)" (onKeyUp)="pianoKeyUp($event)"
+                    (onPitchChange)="setPitch($event)"></app-piano-keys>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="synthesizer-control {{type}}-control"
+     (mousemove)="mouseMove($event)"
+     (mouseleave)="showSlider = false"
+     [ngClass]="{'mouse-down': (mouseIsDown)}"
+>
+  <div class="synthesizer-control-title" *ngIf="title">
+    {{title}}
+  </div>
+  <div *ngIf="type === 'knob'" class="synthesizer-control-knob"
+       (mousedown)="mouseDown($event)"
+       (mouseleave)="mouseUp($event);"
+       (mouseup)="mouseUp($event)"
+       (mouseover)="showSlider = true"
+  >
+    <canvas #canvas></canvas>
+    <div class="knob-value">
+      <div class="knob-value-min">
+        {{min}}
+      </div>
+      <div class="knob-value-half">
+        {{middleValue}}
+      </div>
+      <div class="knob-value-max">
+        {{max}}
+      </div>
+      <div class="synthesizer-control-slider" *ngIf="showSlider">
+        <mat-slider min="{{min}}" max="{{max}}" step="{{step}}" [(ngModel)]="value" (change)="change();"></mat-slider>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="type === 'knob' && synthesizer" class="knob-nodes" (mouseover)="showSlider = false">
+    <div *ngFor="let node of nodes; let i = index"
+         class="knob-node knob-node-{{i+1}}"
+         [ngClass]="{hidden:(!node.targets.length && !synthesizer.connectNode), active:(node.targets.length)}"
+    >
+      <div *ngIf="node.targets.length" class="inside" (dblclick)="clearNode(node)">
+        <div class="knob-node-source" *ngIf="node.source">
+          <span class="source-type" *ngIf="node.source.type">{{node.source.type}}</span>
+          <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>
+        </div>
+      </div>
+      <div *ngIf="!node.targets.length" class="inside" (click)="connectNode(node, synthesizer.connectNode, 'lfo')">
+        <div class="knob-node-source" *ngIf="node.source">
+          <span class="source-type type-{{node.source.type}}" *ngIf="node.source.type">{{node.source.type}}</span>
+          <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

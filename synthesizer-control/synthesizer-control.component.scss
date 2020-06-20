@@ -1,0 +1,248 @@
+$knob_size: 4rem;
+$knob_color: #606060;
+$knob_border: 1px solid #888;
+$knob_arrow_color: #606060;
+$knob_arrow_size: 1rem;
+$knob_gap: 1rem;
+
+$knob_value_gap: 1.5rem;
+$point_size: 4px;
+$point_color: #606060;
+$font_size: 1rem;
+
+$node_size: 2rem;
+$node_gap: 0.1rem;
+$node_background: #8c8c8c;
+$node_hover_background: #c8c8c8;
+$node_active_background: #00ffd9;
+$node_border: 1px solid #606060;
+
+$slider_background: #ccc;
+
+.synthesizer-control {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+
+
+  canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: none;
+    display: block;
+    z-index: 2;
+  }
+
+  .mouse-area {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    z-index: 3;
+  }
+
+
+  .synthesizer-control-title {
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    margin-top: $knob_gap;
+  }
+
+  .synthesizer-control-knob {
+    position: relative;
+    width: $knob_size;
+    height: $knob_size;
+    margin: $knob_size/1.5;
+    cursor: pointer;
+
+    .knob-value {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      pointer-events: none;
+
+      & > * {
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .knob-value-min,
+      .knob-value-half,
+      .knob-value-max {
+        position: absolute;
+        font-size: $font_size;
+
+        &:before {
+          content: '';
+          position: absolute;
+          width: $point_size;
+          height: $point_size;
+          background: $point_color;
+          border-radius: 50%;
+        }
+      }
+
+      .knob-value-min {
+        padding-right: $point_size * 2;
+        left: 0;
+        bottom: 0;
+        text-align: right;
+        transform: translateX(-100%) translateY(50%);
+
+        &:before {
+          top: 50%;
+          right: -$point_size;
+          transform: translateY(-50%);
+        }
+
+
+      }
+
+      .knob-value-half {
+        padding-bottom: $point_size;
+        position: absolute;
+        left: 50%;
+        top: -$point_size * 2;
+        transform: translateX(-50%) translateY(-100%);
+        text-align: center;
+
+        &:before {
+          bottom: -$point_size;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      .knob-value-max {
+        padding-left: $point_size * 2;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        text-align: left;
+        transform: translateX(100%) translateY(50%);
+
+        &:before {
+          top: 50%;
+          left: -$point_size;
+          transform: translateY(-50%);
+        }
+
+
+      }
+
+    }
+
+    .knob-node-value {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+
+      &.knob-node-1 {
+
+      }
+
+      &.knob-node-2 {
+
+      }
+
+      &.knob-node-3 {
+
+      }
+    }
+
+  }
+
+  .knob-nodes {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    margin-top: $knob_gap;
+    pointer-events: none;
+
+
+    .knob-node {
+      background: $node_background;
+      border: $node_border;
+      cursor: pointer;
+      margin: $node_gap;
+      height: $node_size;
+      width: $node_size;
+      border-radius: $node_size / 4;
+      pointer-events: all;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75) inset;
+
+      z-index: 4;
+
+      & > .inside {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+        text-align: center;
+        line-height: $node_size;
+      }
+
+      &:hover {
+        background: $node_hover_background;
+
+      }
+
+      &.active {
+        background: $node_active_background;
+        cursor: default;
+      }
+
+      &.knob-node-1 {
+
+      }
+
+      &.knob-node-2 {
+
+      }
+
+      &.knob-node-3 {
+
+      }
+    }
+  }
+
+  .synthesizer-control-slider {
+    position: absolute;
+    bottom: -$node_gap * 2;
+    width: 200%;
+    background: $node_background;
+    border: $node_border;
+    border-radius: $node_size / 4;
+    z-index: 10;
+    transform: translateX(-25%) translateY(100%);
+
+    .mat-slider {
+      padding: 0;
+      min-width: 100%;
+      height: $node_size;
+      z-index: 10;
+      pointer-events: all;
+    }
+
+  }
+
+  &.mouse-down {
+    z-index: 4;
+
+  }
+
+}
+
