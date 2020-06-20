@@ -55,6 +55,7 @@ export class Synthesizer {
   callbacks: any = {};
 
   constructor(public oscCount = 3, public lfoCount = 3) {
+    // tslint:disable-next-line:new-parens
     this.audioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext);
     for (let i = 0; i < this.oscCount; i++) {
       this.addOsc(i + 1);
@@ -117,13 +118,13 @@ export class Synthesizer {
   }
 
   time(time = this.currentTime) {
-    this.currentTime = time
+    this.currentTime = time;
     this.do('timechange', this.currentTime);
     return this.currentTime;
   }
 
   tempo(tempo = this.currentTempo) {
-    this.currentTempo = tempo
+    this.currentTempo = tempo;
     this.do('tempochange', this.currentTempo);
     return this.currentTempo;
   }
@@ -190,7 +191,7 @@ export class OSC {
   currentTempo = 120;
   currentGain = 1;
   currentTime = 0;
-  currentWaveform;
+  currentWaveform = this.waveforms[0];
   audioLoadStart;
   audioLoadOffset;
 
@@ -243,7 +244,7 @@ export class OSC {
 
   frequency(frequency = this.noteToFrequency(this.currentNote || ['C', 1])) {
     this.currentFrequency = frequency;
-    const pitchedFrequency = this.currentFrequency + (this.currentPitch * (880 / 12) * this.pitchAmount)
+    const pitchedFrequency = this.currentFrequency + (this.currentPitch * (880 / 12) * this.pitchAmount);
     this.osc.frequency.setValueAtTime(pitchedFrequency, this.audioContext.currentTime + this.currentTimeOffset);
     return this.currentFrequency;
   }
@@ -283,7 +284,7 @@ export class OSC {
       value = this.effects.gain.value(value);
     }
     value += (this.volume - 1);
-    return this.currentGain = this.gainValue(value)
+    return this.currentGain = this.gainValue(value);
   }
 
   gainValue(value) {
@@ -354,10 +355,10 @@ export class OSC {
   }
 
   noteToFrequency(noteArr) {
-    const note = noteArr[0].replace("#", "2").toLowerCase();
+    const note = noteArr[0].replace('#', '2').toLowerCase();
     const octave = noteArr[1] || 1;
     return this.noteValues[note][octave];
-  };
+  }
 }
 
 export class OSCSaveData {
@@ -482,7 +483,7 @@ export class AudioEffects {
 
   set(effectName, value) {
     if (this[effectName] && this[effectName].value) {
-      return this[effectName].value(value)
+      return this[effectName].value(value);
     }
     return null;
   }
@@ -550,12 +551,12 @@ export class AudioEffectNode {
 
     if (nodeType === 'distortion') {
       const makeDistortionCurve = (amount = 50) => {
-        const n_samples = 44100;
-        const curve = new Float32Array(n_samples);
+        const nSamples = 44100;
+        const curve = new Float32Array(nSamples);
         const deg = Math.PI / 180;
         let x;
-        for (let i = 0; i < n_samples; i++) {
-          x = i * 2 / n_samples - 1;
+        for (let i = 0; i < nSamples; i++) {
+          x = i * 2 / nSamples - 1;
           curve[i] = (3 + amount) * x * 20 * deg / (Math.PI + amount * Math.abs(x));
         }
         return curve;
@@ -620,7 +621,7 @@ export class AudioEffectNode {
       }
     }
     return this.audioNode.type;
-  };
+  }
 
   start() {
     this.connect(true);
@@ -739,6 +740,7 @@ export class SynthesizerManager {
           if (!this.synthesizer.oscs[i]) {
             osc = this.synthesizer.addOsc(i + 1);
           }
+          // tslint:disable-next-line:forin
           for (const lfoKey in saveData[key][i]) {
             this.synthesizer.oscs[i][lfoKey] = saveData[key][i][lfoKey];
           }
@@ -752,6 +754,7 @@ export class SynthesizerManager {
           } else {
             lfo = this.synthesizer.lfos[i];
           }
+          // tslint:disable-next-line:forin
           for (const lfoKey in saveData[key]) {
             lfo[lfoKey] = saveData[key][lfoKey];
           }
@@ -773,15 +776,17 @@ export class SynthesizerManager {
           saveData[key] = this.synthesizer[key];
         }
       }
-      for (let osc of this.synthesizer.oscs) {
+      for (const osc of this.synthesizer.oscs) {
         const saveDataOsc = new OSCSaveData();
+        // tslint:disable-next-line:forin
         for (const key in saveDataOsc) {
           saveDataOsc[key] = osc[key];
         }
         saveData.oscs.push(saveDataOsc);
       }
-      for (let lfo of this.synthesizer.lfos) {
+      for (const lfo of this.synthesizer.lfos) {
         const saveDataLfo = new LFOSaveData();
+        // tslint:disable-next-line:forin
         for (const key in saveDataLfo) {
           saveDataLfo[key] = lfo[key];
         }
@@ -804,8 +809,9 @@ export class SynthesizerManager {
         }
       }
       if (savedData.oscs) {
-        for (let osc of savedData.oscs) {
+        for (const osc of savedData.oscs) {
           const saveDataOsc = new OSCSaveData();
+          // tslint:disable-next-line:forin
           for (const key in saveDataOsc) {
             saveDataOsc[key] = osc[key];
           }
@@ -813,8 +819,9 @@ export class SynthesizerManager {
         }
       }
       if (savedData.oscs) {
-        for (let lfo of savedData.lfos) {
+        for (const lfo of savedData.lfos) {
           const saveDataLfo = new LFOSaveData();
+          // tslint:disable-next-line:forin
           for (const key in saveDataLfo) {
             saveDataLfo[key] = lfo[key];
           }
@@ -864,7 +871,7 @@ export class MIDIManager {
 
   updateMidiInput(input) {
     let exist = false;
-    for (let controller of this.controllers) {
+    for (const controller of this.controllers) {
       if (controller.id === input.id) {
         controller.name = name;
         controller.input = input;
@@ -1007,6 +1014,7 @@ export class MIDIController {
 
   keyDown(midiNumber, velocity) {
     this.keysPressed++;
+    // tslint:disable-next-line:forin
     for (const note in this.midiValues) {
       for (let i = 0; i < this.midiValues[note].length; i++) {
         if (midiNumber === this.midiValues[note][i]) {
