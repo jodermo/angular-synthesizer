@@ -7,4 +7,4 @@ Modular Synthesizer • Angular • Web Audio API • Web MIDI API
 |    ---:| :---          | :---         |
 | <img src="https://angular.io/assets/images/logos/angular/angular.svg" height="64"  alt="Angular Logo" /> | Integration as Angular Module | [WEBSITE](https://angular.io) <br> [DOCS](https://angular.io/docs)|
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/W3C%C2%AE_Icon.svg/1200px-W3C%C2%AE_Icon.svg.png" height="64" alt="Nest Logo" /><br> Web Audio API | Generate and modify audio in browser | [INFOS](https://www.w3.org/TR/webaudio/)|
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/W3C%C2%AE_Icon.svg/1200px-W3C%C2%AE_Icon.svg.png" height="64" alt="Nest Logo" /><br> Web MIDI API | Use MIDI devices in browser | [INFOS](https://www.w3.org/TR/webaudio/)|
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/W3C%C2%AE_Icon.svg/1200px-W3C%C2%AE_Icon.svg.png" height="64" alt="Nest Logo" /><br> Web MIDI API | Use MIDI devices in browser | [INFOS](https://www.w3.org/TR/webmidi/)|
