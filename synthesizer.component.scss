@@ -1,18 +1,16 @@
+@import "synthesizer.layout";
+
 .synthesizer {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: $color-background-main;
+  color: $color-text-main;
 
   .synthesizer-options {
-    .synthesizer-navigation {
-      display: flex;
-
-      & > * {
-        flex: 1;
-      }
-    }
+    border-top: 1px solid $color-background-secondary;
   }
 
   .synthesizer-main {
@@ -25,26 +23,35 @@
       height: 100%;
       display: flex;
       overflow-x: hidden;
-      overflow-y: scroll;
+      overflow-y: auto;
 
       .synthesizer-oscs {
-        flex: 1;
         display: flex;
         flex-direction: row;
 
 
         .synthesizer-osc {
+          border-right: 1px solid $color-background-secondary;
           flex: 1;
 
+          &:last-child {
+            border-right: none;
+          }
         }
       }
 
       .synthesizer-lfos {
         display: flex;
         flex-direction: column;
+        border-left: 1px solid $color-background-secondary;
 
         .synthesizer-lfo {
+          border-bottom: 1px solid $color-background-secondary;
           flex: 1;
+
+          &:last-child {
+            border-bottom: none;
+          }
         }
       }
 

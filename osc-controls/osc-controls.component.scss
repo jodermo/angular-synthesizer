@@ -1,4 +1,18 @@
+@import "../synthesizer.layout";
+
 .synthesizer-osc-controls {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  opacity: .5;
+
+
+
+  .synthesizer-osc-control {
+    flex: 1;
+  }
+
+  &.active{
+    opacity: 1;
+  }
 }

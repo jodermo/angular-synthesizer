@@ -1,0 +1,48 @@
+@import "../synthesizer.layout";
+
+.synthesizer-lfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: .5;
+  height: 100%;
+  min-width: 100px;
+
+  .synthesizer-lfo-header {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    padding: $padding-small;
+
+    .checkbox {
+      margin-right: $padding-small;
+    }
+
+    h3 {
+      line-height: $checkbox-size;
+      margin: 0;
+      padding: 0;
+      font-size: $font-size-small;
+    }
+  }
+
+  .synthesizer-lfo-options{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .synthesizer-lfo-connect {
+
+  }
+
+  &:hover {
+    color: $color-hover-text-main;
+  }
+
+  &.active {
+    opacity: 1;
+    color: $color-active-background-main;
+  }
+}

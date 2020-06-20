@@ -1,0 +1,17 @@
+@import "../synthesizer.layout";
+
+.synthesizer-settings {
+  position: relative;
+  width: 100%;
+  display: flex;
+  padding-left: $padding-medium;
+
+  .synthesizer-settings-volume {
+  }
+
+  .synthesizer-settings-save {
+    position: absolute;
+    height: 100%;
+    right: 0;
+  }
+}

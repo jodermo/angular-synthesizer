@@ -42,9 +42,9 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
   centerY;
   middleValue;
   nodes: SynthesizerNode[] = [];
-  knobColor = '#000';
-  knobLegendColor = '#666';
-  knobValueColor = '#0f0';
+  knobColor = '#00725f';
+  knobLegendColor = '#353535';
+  knobValueColor = '#00ffd9';
   knobTextColor = '#fff';
   knobLegendSize = 5;
   font = 'bold 1rem Arial';

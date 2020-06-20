@@ -1,8 +1,4 @@
 <div class="synthesizer" *ngIf="synthesizer">
-  <div class="synthesizer-options">
-    <app-midi-controller [synthesizer]="synthesizer"></app-midi-controller>
-    <app-synthesizer-settings [synthesizer]="synthesizer"></app-synthesizer-settings>
-  </div>
   <div class="synthesizer-main">
     <div class="inside">
       <div class="synthesizer-oscs">
@@ -26,8 +22,13 @@
       </div>
     </div>
   </div>
+  <div class="synthesizer-options">
+    <app-synthesizer-settings [synthesizer]="synthesizer"></app-synthesizer-settings>
+    <app-midi-controller [synthesizer]="synthesizer"></app-midi-controller>
+  </div>
   <div class="synthesizer-keyboard">
-    <app-piano-keys [synthesizer]="synthesizer" [currentNote]="synthesizer.currentNote" [currentOctave]="synthesizer.currentOctave"
+    <app-piano-keys [synthesizer]="synthesizer" [currentNote]="synthesizer.currentNote"
+                    [currentOctave]="synthesizer.currentOctave"
                     [octaves]="octaves" (onKeyDown)="pianoKeyDown($event)" (onKeyUp)="pianoKeyUp($event)"
                     (onPitchChange)="setPitch($event)"></app-piano-keys>
   </div>

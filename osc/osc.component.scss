@@ -1,0 +1,40 @@
+@import "../synthesizer.layout";
+
+.synthesizer-osc {
+  opacity: .5;
+
+  .synthesizer-osc-header {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    padding: $padding-small;
+
+    .checkbox {
+      margin-right: $padding-small;
+    }
+
+    h3 {
+      line-height: $checkbox-size;
+      margin: 0;
+      padding: 0;
+    }
+
+  }
+
+  .synthesizer-osc-waveforms {
+    display: flex;
+
+    .synthesizer-osc-waveform {
+      flex: 1;
+    }
+  }
+
+  &:hover {
+    color: $color-hover-text-main;
+  }
+
+  &.active {
+    opacity: 1;
+    color: $color-active-background-main;
+  }
+}

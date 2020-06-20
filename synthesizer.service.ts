@@ -368,7 +368,7 @@ export class OSCSaveData {
 export class LFO {
   // Low Frequency OSC
   type = 'lfo';
-
+  active = false;
   synthesizer: Synthesizer;
   waveforms = [
     'sine',
@@ -380,6 +380,14 @@ export class LFO {
 
 
   constructor(public id = null) {
+  }
+
+  toggleActive() {
+    if (!this.active) {
+      this.active = true;
+    } else {
+      this.active = false;
+    }
   }
 }
 

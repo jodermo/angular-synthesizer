@@ -1,5 +1,5 @@
-<div class="synthesizer-osc-controls" *ngIf="osc">
-  <div *ngFor="let effect of osc.effectNodes()">
+<div class="synthesizer-osc-controls" *ngIf="osc" [ngClass]="{active:(osc.active)}">
+  <div class="synthesizer-osc-control" *ngFor="let effect of osc.effectNodes()">
     <app-synthesizer-control
       [synthesizer]="osc.synthesizer"
       [sourceNode]="effect"

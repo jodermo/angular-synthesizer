@@ -8,6 +8,8 @@ import { Synthesizer } from '../synthesizer.service';
 })
 export class SynthesizerSettingsComponent implements OnInit {
   @Input() synthesizer: Synthesizer;
+  showAbout = false;
+
   constructor() { }
 
   ngOnInit(): void {
