@@ -1,0 +1,51 @@
+<div class="synthesizer-sequencer"
+     [ngClass]="{connecting:(sequencer.synthesizer.connectNode === sequencer), active:(sequencer.active)}"
+>
+  <div class="synthesizer-sequencer-header">
+    <div class="checkbox" [ngClass]="{active:(sequencer.active)}" (click)="sequencer.toggleActive()"></div>
+    <h3 (click)="sequencer.toggleActive()">Sequencer <span *ngIf="sequencer.id">{{sequencer.id}}</span></h3>
+    <button class="synthesizer-sequencer-connect" (click)="connect()"
+            [ngClass]="{active:(sequencer.synthesizer.connectNode === sequencer)}">connect
+    </button>
+    <button class="synthesizer-sequencer-remove" (click)="sequencer.remove()">X
+    </button>
+  </div>
+  <div class="synthesizer-sequencer-waveform"
+       (mouseover)="showOptions = true;"
+       (mouseout)="showOptions = false;"
+  >
+    <app-waveform-canvas *ngIf="sequencer.currentWaveform" [type]="sequencer.currentWaveform"
+                         [amplitude]="amplitude" [frequency]="rate"
+    ></app-waveform-canvas>
+    <div class="synthesizer-sequencer-waveform-options" [ngClass]="{active:(showOptions)}">
+      <app-synthesizer-control
+        [min]="0"
+        [max]="15"
+        [step]="1"
+        [value]="rate - 1"
+        [outputMin]="1"
+        [outputMiddle]="8"
+        [outputMax]="16"
+        [outputValue]="rate"
+        [default]="1"
+        (onChange)="rate = $event + 1;"
+      ></app-synthesizer-control>
+      <app-synthesizer-control
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        [value]="amplitude"
+        [default]="100"
+        (onChange)="amplitude = $event;"
+      ></app-synthesizer-control>
+    </div>
+  </div>
+  <div class="synthesizer-sequencer-waveforms">
+    <button *ngFor="let waveform of sequencer.waveforms"
+            [ngClass]="{active:(waveform === sequencer.currentWaveform)}"
+            (click)="sequencer.waveform(waveform)"
+    >
+      {{waveform}}
+    </button>
+  </div>
+</div>

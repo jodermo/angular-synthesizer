@@ -1,11 +1,50 @@
-<div class="synthesizer-lfo" [ngClass]="{connecting:(lfo.synthesizer.connectNode === lfo), active:(lfo.active)}">
-  <div class="synthesizer-lfo-header" (click)="lfo.toggleActive()">
-    <div class="checkbox" [ngClass]="{active:(lfo.active)}"></div>
-    <h3>LFO <span *ngIf="lfo.id">{{lfo.id}}</span></h3>
-  </div>
-  <div class="synthesizer-lfo-options">
-    <button class="synthesizer-lfo-connect" (click)="connectLfo()"
+<div class="synthesizer-lfo" [ngClass]="{connecting:(lfo.synthesizer.connectNode === lfo), active:(lfo.active)}"
+>
+  <div class="synthesizer-lfo-header">
+    <div class="checkbox" [ngClass]="{active:(lfo.active)}" (click)="lfo.toggleActive()"></div>
+    <h3 (click)="lfo.toggleActive()">LFO <span *ngIf="lfo.id">{{lfo.id}}</span></h3>
+    <button class="synthesizer-lfo-connect" (click)="connect()"
             [ngClass]="{active:(lfo.synthesizer.connectNode === lfo)}">connect
+    </button>
+    <button class="synthesizer-lfo-remove" (click)="lfo.remove()">X
+    </button>
+  </div>
+  <div class="synthesizer-lfo-waveform"
+       (mouseover)="showOptions = true;"
+       (mouseout)="showOptions = false;"
+  >
+    <app-waveform-canvas *ngIf="lfo.currentWaveform" [type]="lfo.currentWaveform"
+                         [amplitude]="amplitude" [frequency]="rate"
+    ></app-waveform-canvas>
+    <div class="synthesizer-lfo-waveform-options" [ngClass]="{active:(showOptions)}">
+      <app-synthesizer-control
+        [min]="0"
+        [max]="15"
+        [step]="1"
+        [value]="rate - 1"
+        [outputMin]="1"
+        [outputMiddle]="8"
+        [outputMax]="16"
+        [outputValue]="rate"
+        [default]="1"
+        (onChange)="rate = $event + 1;"
+      ></app-synthesizer-control>
+      <app-synthesizer-control
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        [value]="amplitude"
+        [default]="100"
+        (onChange)="amplitude = $event;"
+      ></app-synthesizer-control>
+    </div>
+  </div>
+  <div class="synthesizer-lfo-waveforms">
+    <button *ngFor="let waveform of lfo.waveforms"
+            [ngClass]="{active:(waveform === lfo.currentWaveform)}"
+            (click)="lfo.waveform(waveform)"
+    >
+      {{waveform}}
     </button>
   </div>
 </div>

@@ -28,7 +28,6 @@ To integrate this module in your Angular project:
  <app-synthesizer></app-synthesizer>
 ```
 <br><br>
-
 ##### ! Note: Angular Material has to be installed
 Install Angular Material in your Project with:
 `ng add @angular/material`

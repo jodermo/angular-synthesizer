@@ -1,30 +1,72 @@
 <div class="synthesizer" *ngIf="synthesizer">
   <div class="synthesizer-main">
     <div class="inside">
-      <div class="synthesizer-oscs">
-        <div *ngFor="let osc of synthesizer.oscs; let i = index"
-             class="synthesizer-osc"
-             (click)="selectOsc(osc)"
-             [ngClass]="{selected:(currentOsc === osc)}"
-        >
-          <app-osc [osc]="osc"></app-osc>
-          <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+      <div class="synthesizer-main-section">
+        <div class="synthesizer-oscs">
+          <div *ngFor="let osc of synthesizer.oscs; let i = index"
+               class="synthesizer-osc"
+               (click)="selectOsc(osc)"
+               [ngClass]="{selected:(currentOsc === osc)}"
+          >
+            <app-osc [osc]="osc"></app-osc>
+            <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+          </div>
         </div>
       </div>
-      <div class="synthesizer-lfos">
-        <div *ngFor="let lfo of synthesizer.lfos; let i = index"
-             class="synthesizer-lfo"
-             (click)="selectLfo(lfo)"
-             [ngClass]="{selected:(currentLfo === lfo)}"
-        >
-          <app-lfo [lfo]="lfo"></app-lfo>
+      <div class="synthesizer-nodes-section vertical">
+        <div class="synthesizer-nodes-navigation">
+          <button *ngFor="let tab of nodesTabs" (click)="nodesTab = tab" [ngClass]="{active:(nodesTab === tab)}">
+            {{tab}}
+          </button>
+        </div>
+        <div class="synthesizer-lfos" *ngIf="nodesTab === 'LFO'">
+          <div *ngFor="let lfo of synthesizer.lfos; let i = index"
+               class="synthesizer-lfo"
+               (click)="selectLfo(lfo)"
+               [ngClass]="{selected:(currentLfo === lfo)}"
+          >
+            <app-lfo [lfo]="lfo"></app-lfo>
+          </div>
+          <button (click)="synthesizer.addLfo()">+</button>
+        </div>
+        <div class="synthesizer-sequencers" *ngIf="nodesTab === 'Sequencer'">
+          <div *ngFor="let sequencer of synthesizer.sequencers; let i = index"
+               class="synthesizer-lfo"
+               (click)="selectSequencer(sequencer)"
+               [ngClass]="{selected:(currentSequencer === sequencer)}"
+          >
+            <app-sequencer [sequencer]="sequencer"></app-sequencer>
+          </div>
+          <button (click)="synthesizer.addSequencer()">+</button>
         </div>
       </div>
     </div>
   </div>
   <div class="synthesizer-options">
-    <app-synthesizer-settings [synthesizer]="synthesizer"></app-synthesizer-settings>
-    <app-midi-controller [synthesizer]="synthesizer"></app-midi-controller>
+    <div class="synthesizer-settings">
+      <div class="synthesizer-settings-values">
+        <label class="synthesizer-settings-volume">
+          Volume
+          <mat-slider min="0" max="1" step=".01"
+                      [(ngModel)]="synthesizer.volume"></mat-slider>
+
+        </label>
+        <label>
+          Tempo
+          <input type="number" [(ngModel)]="synthesizer.currentTempo" (change)="synthesizer.tempo()"/>
+        </label>
+      </div>
+      <div class="synthesizer-option-buttons">
+        <button class="synthesizer-settings-reset" (click)="synthesizer.reset()">↺</button>
+        <button class="synthesizer-settings-save" (click)="synthesizer.save()">💾</button>
+        <button class="synthesizer-settings-save"  (click)="showSettings = !showSettings"
+                [ngClass]="{active:(showSettings)}">
+          <span *ngIf="!showSettings">...</span>
+          <span *ngIf="showSettings">▼</span>
+        </button>
+      </div>
+    </div>
+    <app-synthesizer-settings *ngIf="showSettings" [synthesizer]="synthesizer"></app-synthesizer-settings>
   </div>
   <div class="synthesizer-keyboard">
     <app-piano-keys [synthesizer]="synthesizer" [currentNote]="synthesizer.currentNote"

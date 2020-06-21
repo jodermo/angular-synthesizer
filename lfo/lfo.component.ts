@@ -8,6 +8,11 @@ import { LFO } from '../synthesizer.service';
 })
 export class LfoComponent implements OnInit {
   @Input() lfo: LFO;
+  @Input() amplitude = 100;
+  @Input() rate = 1;
+
+  showOptions = false;
+
 
   constructor() {
   }
@@ -15,7 +20,7 @@ export class LfoComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  connectLfo() {
+  connect() {
     this.lfo.synthesizer.connectNode = this.lfo;
   }
 

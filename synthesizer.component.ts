@@ -1,5 +1,5 @@
-import {  Component, OnInit } from '@angular/core';
-import { LFO, OSC, Synthesizer, SynthesizerService } from './synthesizer.service';
+import { Component, OnInit } from '@angular/core';
+import { LFO, OSC, Sequencer, Synthesizer, SynthesizerService } from './synthesizer.service';
 
 
 @Component({
@@ -14,12 +14,16 @@ export class SynthesizerComponent implements OnInit {
   synthesizer: Synthesizer;
   currentOsc: OSC;
   currentLfo: LFO;
+  currentSequencer: Sequencer;
   currentOscNumber;
   octaves = 4;
   connectLfo: LFO;
+  showSettings = false;
+  nodesTabs = ['LFO', 'Sequencer'];
+  nodesTab = this.nodesTabs[0];
 
   constructor(public audioEditor: SynthesizerService) {
-    this.synthesizer = new Synthesizer(3);
+    this.synthesizer = new Synthesizer(3, 1, 1);
     if (this.synthesizer.oscs) {
       this.currentOsc = this.synthesizer.oscs[0];
     }
@@ -45,17 +49,21 @@ export class SynthesizerComponent implements OnInit {
   }
 
 
-
   selectLfo(lfo: LFO) {
     this.currentLfo = lfo;
   }
+
+  selectSequencer(sequencer: Sequencer) {
+    this.currentLfo = sequencer;
+  }
+
 
   pianoKeyDown(e) {
     this.synthesizer.playNote(e.note, e.octave);
   }
 
   pianoKeyUp(e) {
-    this.synthesizer.stop();
+    this.synthesizer.stopTone();
   }
 
   setPitch(pitch) {

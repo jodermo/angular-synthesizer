@@ -37,24 +37,52 @@ export class AudioLayer {
 
 }
 
+export class SynthesizerLayout {
+  colors = {
+    default: {
+      main: '#00725f',
+      secondary: '#00ffd9',
+      light: '#cccccc',
+      dark: '#222222'
+    },
+    hover: {
+      main: '#00ffd9',
+      secondary: '#00725f',
+      light: '#fff',
+      dark: '#6d6d6d'
+    },
+    active: {
+      main: '#003c33',
+      secondary: '#00725f',
+      light: '#00ffd9',
+      dark: '#003c33'
+    }
+
+
+  };
+}
+
 export class Synthesizer {
   audioContext: AudioContext;
   oscs: OSC[] = [];
   lfos: LFO[] = [];
+  sequencers: Sequencer[] = [];
   connectNode: any;
   volume = 1;
   release = 250;
   delay = 0;
   currentPitch = 0;
   currentTempo = 120;
+  startTime;
   currentTime = 0;
   currentNote = 'C';
   currentOctave = 1;
   manager = new SynthesizerManager(this);
   midi = new MIDIManager(this);
   callbacks: any = {};
+  paused = true;
 
-  constructor(public oscCount = 3, public lfoCount = 3) {
+  constructor(public oscCount = 3, public lfoCount = 1, public sequencerCount = 1) {
     // tslint:disable-next-line:new-parens
     this.audioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext);
     for (let i = 0; i < this.oscCount; i++) {
@@ -63,14 +91,19 @@ export class Synthesizer {
     for (let i = 0; i < this.lfoCount; i++) {
       this.addLfo(i + 1);
     }
+    for (let i = 0; i < this.sequencerCount; i++) {
+      this.addSequencer(i + 1);
+    }
     if (this.oscs.length) {
       this.oscs[0].active = true;
     }
     this.manager.getLocalStorage();
   }
 
-
   addOsc(id = 0) {
+    if (id === 0) {
+      id = this.oscs.length + 1;
+    }
     const osc = new OSC(this.audioContext, id);
     osc.synthesizer = this;
     this.oscs.push(osc);
@@ -78,20 +111,45 @@ export class Synthesizer {
   }
 
   addLfo(id = 0) {
+    if (id === 0) {
+      id = this.lfos.length + 1;
+    }
     const lfo = new LFO(id);
     lfo.synthesizer = this;
     this.lfos.push(lfo);
     return lfo;
   }
 
-  start() {
+  addSequencer(id = 0) {
+    if (id === 0) {
+      id = this.sequencers.length + 1;
+    }
+    const sequencer = new Sequencer(id);
+    sequencer.synthesizer = this;
+    this.sequencers.push(sequencer);
+    return sequencer;
+  }
+
+  play() {
+    this.paused = false;
+    this.timeUpdate();
+    this.do('play', this.currentTime);
+  }
+
+  pause() {
+    this.paused = true;
+    this.do('pause', this.currentTime);
+  }
+
+  startTone() {
     for (const osc of this.oscs) {
       osc.start();
     }
+    this.timeUpdate();
     this.do('start', [this.currentNote, this.currentOctave]);
   }
 
-  stop() {
+  stopTone() {
     for (const osc of this.oscs) {
       osc.stop();
     }
@@ -111,7 +169,7 @@ export class Synthesizer {
     setTimeout(() => {
       this.playNote(note, octave);
       setTimeout(() => {
-        this.stop();
+        this.stopTone();
       }, release);
     }, delay);
     this.do('triggernote', [note, octave, delay, release]);
@@ -142,6 +200,24 @@ export class Synthesizer {
     this.manager.saveSynthesizer();
   }
 
+  reset() {
+    if (confirm('you want to reset modulation?')) {
+      localStorage.removeItem('synthesizer-data');
+      location.reload();
+    }
+
+  }
+
+  timeUpdate() {
+    if (!this.startTime) {
+      this.startTime = Date.now();
+    }
+    this.currentTime = Date.now() - this.startTime;
+    if (!this.paused) {
+      window.requestAnimationFrame(this.timeUpdate);
+    }
+  }
+
   on(callback, event) {
     if (!this.callbacks[callback]) {
       this.callbacks[callback] = [];
@@ -158,6 +234,7 @@ export class Synthesizer {
   }
 
 }
+
 
 export class OSC {
   type = 'osc';
@@ -359,6 +436,17 @@ export class OSC {
     const octave = noteArr[1] || 1;
     return this.noteValues[note][octave];
   }
+
+  remove() {
+    if (this.synthesizer && confirm('are you sure?')) {
+      for (let i = 0; i < this.synthesizer.oscs.length; i++) {
+        if (this.synthesizer.oscs[i] === this) {
+          return this.synthesizer.oscs.splice(i, 1);
+        }
+
+      }
+    }
+  }
 }
 
 export class OSCSaveData {
@@ -369,7 +457,7 @@ export class OSCSaveData {
 export class LFO {
   // Low Frequency OSC
   type = 'lfo';
-  active = false;
+  active = true;
   synthesizer: Synthesizer;
   waveforms = [
     'sine',
@@ -383,6 +471,14 @@ export class LFO {
   constructor(public id = null) {
   }
 
+  update() {
+    this.waveform();
+  }
+
+  waveform(waveform = this.currentWaveform) {
+    return this.currentWaveform = waveform;
+  }
+
   toggleActive() {
     if (!this.active) {
       this.active = true;
@@ -390,10 +486,74 @@ export class LFO {
       this.active = false;
     }
   }
+
+  remove() {
+    if (this.synthesizer && confirm('are you sure?')) {
+      for (let i = 0; i < this.synthesizer.lfos.length; i++) {
+        if (this.synthesizer.lfos[i] === this) {
+          return this.synthesizer.lfos.splice(i, 1);
+        }
+
+      }
+    }
+  }
 }
 
 export class LFOSaveData {
+  currentWaveform = 'sine';
+  active = false;
+  amplitude = 100;
+}
 
+export class Sequencer {
+  // Step Sequencer
+  type = 'seq';
+  active = true;
+  synthesizer: Synthesizer;
+  waveforms = [
+    'sine',
+    'square',
+    'sawtooth',
+    'triangle'
+  ];
+  currentWaveform = this.waveforms[0];
+
+
+  constructor(public id = null) {
+  }
+
+  update() {
+    this.waveform();
+  }
+
+  waveform(waveform = this.currentWaveform) {
+    return this.currentWaveform = waveform;
+  }
+
+  toggleActive() {
+    if (!this.active) {
+      this.active = true;
+    } else {
+      this.active = false;
+    }
+  }
+
+  remove() {
+    if (this.synthesizer && confirm('are you sure?')) {
+      for (let i = 0; i < this.synthesizer.sequencers.length; i++) {
+        if (this.synthesizer.sequencers[i] === this) {
+          return this.synthesizer.sequencers.splice(i, 1);
+        }
+
+      }
+    }
+  }
+}
+
+export class SequencerSaveData {
+  currentWaveform = 'sine';
+  active = false;
+  amplitude = 100;
 }
 
 export class AudioEffects {
@@ -719,8 +879,10 @@ export class SynthesizerSaveData {
   volume = 1;
   release = 250;
   delay = 0;
-  lfos: any[] = [];
+
   oscs: any[] = [];
+  lfos: any[] = [];
+  sequencers: any[];
 }
 
 export class SynthesizerManager {
@@ -741,8 +903,8 @@ export class SynthesizerManager {
             osc = this.synthesizer.addOsc(i + 1);
           }
           // tslint:disable-next-line:forin
-          for (const lfoKey in saveData[key][i]) {
-            this.synthesizer.oscs[i][lfoKey] = saveData[key][i][lfoKey];
+          for (const oscKey in saveData[key][i]) {
+            this.synthesizer.oscs[i][oscKey] = saveData[key][i][oscKey];
           }
           this.synthesizer.oscs[i].update();
         }
@@ -751,13 +913,24 @@ export class SynthesizerManager {
         for (let i = 0; i < saveData[key].length; i++) {
           if (!this.synthesizer.lfos[i]) {
             lfo = this.synthesizer.addLfo(i + 1);
-          } else {
-            lfo = this.synthesizer.lfos[i];
           }
           // tslint:disable-next-line:forin
-          for (const lfoKey in saveData[key]) {
-            lfo[lfoKey] = saveData[key][lfoKey];
+          for (const lfoKey in saveData[key][i]) {
+            this.synthesizer.lfos[i][lfoKey] = saveData[key][i][lfoKey];
           }
+          this.synthesizer.lfos[i].update();
+        }
+      } else if (key === 'sequencer') {
+        let sequencer: Sequencer;
+        for (let i = 0; i < saveData[key].length; i++) {
+          if (!this.synthesizer.lfos[i]) {
+            sequencer = this.synthesizer.addSequencer(i + 1);
+          }
+          // tslint:disable-next-line:forin
+          for (const sequencerKey in saveData[key][i]) {
+            this.synthesizer.sequencers[i][sequencerKey] = saveData[key][i][sequencerKey];
+          }
+          this.synthesizer.sequencers[i].update();
         }
       } else {
         this.synthesizer[key] = saveData[key];
@@ -767,7 +940,7 @@ export class SynthesizerManager {
   }
 
   saveSynthesizer() {
-    if (!this.saving) {
+    if (!this.saving && confirm('You want to save this modulation?')) {
       this.saving = true;
 
       const saveData = new SynthesizerSaveData();
@@ -794,6 +967,7 @@ export class SynthesizerManager {
       }
       this.saveLocalStorage(saveData);
       this.synthesizer.do('onsave', saveData);
+      alert('Modulation saved');
     }
 
   }
@@ -846,7 +1020,8 @@ export class MIDIManager {
 
   inputs;
   outputs;
-  controllers: MIDIController[] = [];
+  inputControllers: MIDIController[] = [];
+  outputControllers: MIDIController[] = [];
 
   constructor(public synthesizer) {
     if ((navigator as any).requestMIDIAccess) {
@@ -864,14 +1039,18 @@ export class MIDIManager {
     for (const input of midiAccess.inputs.values()) {
       this.updateMidiInput(input);
     }
+    for (const output of midiAccess.outputs.values()) {
+      this.updateMidiOutput(output);
+    }
     midiAccess.onstatechange = (e) => {
+      console.log(e);
       this.updateMidiInput(e.port);
     };
   }
 
   updateMidiInput(input) {
     let exist = false;
-    for (const controller of this.controllers) {
+    for (const controller of this.inputControllers) {
       if (controller.id === input.id) {
         controller.name = name;
         controller.input = input;
@@ -879,7 +1058,21 @@ export class MIDIManager {
       }
     }
     if (!exist) {
-      this.controllers.push(new MIDIController(input, this.synthesizer));
+      this.inputControllers.push(new MIDIController(input, this.synthesizer));
+    }
+  }
+
+  updateMidiOutput(output) {
+    let exist = false;
+    for (const controller of this.inputControllers) {
+      if (controller.id === output.id) {
+        controller.name = name;
+        controller.input = output;
+        exist = true;
+      }
+    }
+    if (!exist) {
+      this.outputControllers.push(new MIDIController(output, this.synthesizer));
     }
   }
 
@@ -1028,7 +1221,7 @@ export class MIDIController {
     this.keysPressed--;
     if (this.keysPressed <= 0) {
       if (this.synthesizer) {
-        this.synthesizer.stop();
+        this.synthesizer.stopTone();
       }
     }
   }

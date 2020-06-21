@@ -1,9 +1,2 @@
-<div class="synthesizer-settings">
-  <label class="synthesizer-settings-volume">
-    Volume
-    <mat-slider min="0" max="1" step=".01"
-                [(ngModel)]="synthesizer.volume"></mat-slider>
 
-  </label>
-  <button class="synthesizer-settings-save" (click)="synthesizer.save()">save configuration</button>
-</div>
+<app-midi-controller [synthesizer]="synthesizer"></app-midi-controller>

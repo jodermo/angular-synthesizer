@@ -1,23 +1,18 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Input,
-  AfterViewInit,
   Output,
-  ViewChild,
-  OnChanges,
-  SimpleChanges
 } from '@angular/core';
 import { AudioEffectNode, Synthesizer, SynthesizerNode } from '../synthesizer.service';
+import { SynthesizerCanvasComponent } from '../synthesizer-canvas/synthesizer-canvas.component';
 
 @Component({
   selector: 'app-synthesizer-control',
   templateUrl: './synthesizer-control.component.html',
   styleUrls: ['./synthesizer-control.component.scss']
 })
-export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
-  @ViewChild('canvas', {static: false}) canvasRef: ElementRef;
+export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   @Input() synthesizer: Synthesizer;
   @Input() sourceNode: AudioEffectNode;
   @Input() title;
@@ -26,20 +21,24 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
   @Input() max = 1;
   @Input() step = 0.01;
   @Input() value = 0;
+
+  @Input() outputMin;
+  @Input() outputMiddle;
+  @Input() outputMax;
+  @Input() outputValue;
+
+
   @Input() default = 0;
   @Input() nodeCount = 3;
   @Input() speed = 1;
   @Input() knobRange = 280;
   @Input() knobRotation = 130;
+
+  // tslint:disable-next-line:no-output-on-prefix
   @Output() onChange = new EventEmitter<number>();
+  // tslint:disable-next-line:no-output-on-prefix
   @Output() onConnectNode = new EventEmitter<SynthesizerNode>();
 
-  canvas: HTMLCanvasElement;
-  ctx;
-  width;
-  height;
-  centerX;
-  centerY;
   middleValue;
   nodes: SynthesizerNode[] = [];
   knobColor = '#00725f';
@@ -48,23 +47,41 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
   knobTextColor = '#fff';
   knobLegendSize = 5;
   font = 'bold 1rem Arial';
-  mouseIsDown = false;
-  mouseStart;
+
   showSlider = false;
   fixedValue = 0;
 
-  constructor() {
-  }
-
-  ngAfterViewInit(): void {
+  onInit() {
     this.initMiddleValue();
-    this.initCanvas();
     this.initNodes();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    this.drawCanvas();
+  onChanges() {
     this.initNodes();
+  }
+
+  onMouseOver(event) {
+    this.showSlider = true;
+  }
+
+  onMouseMove(event) {
+    if (this.mouseIsDown && event) {
+      if (this.mouseOffset.y) {
+        const duration = this.max - this.min;
+        const newValue = this.value - ((this.mouseOffset.y * duration) * this.speed / 360);
+        this.change(newValue);
+      }
+    }
+  }
+
+  onDrawCanvas(ctx = this.ctx) {
+    this.initMiddleValue();
+    if (ctx) {
+      this.canvasSize();
+      this.drawLegend();
+      this.drawKnob();
+      this.drawValue();
+    }
   }
 
   connectNode(node: SynthesizerNode, source: any, type: string = null) {
@@ -91,34 +108,6 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  initCanvas() {
-    if (this.canvasRef) {
-      this.canvas = this.canvasRef.nativeElement;
-      this.ctx = this.canvas.getContext('2d');
-      this.drawCanvas();
-    }
-  }
-
-  canvasSize() {
-    if (this.canvas) {
-      this.width = this.canvas.clientWidth;
-      this.height = this.canvas.clientHeight;
-      this.centerX = this.width / 2;
-      this.centerY = this.height / 2;
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
-    }
-  }
-
-  drawCanvas() {
-    this.initMiddleValue();
-    if (this.ctx) {
-      this.canvasSize();
-      this.drawLegend();
-      this.drawKnob();
-      this.drawValue();
-    }
-  }
 
   drawLegend() {
     const size = this.width / 2 - this.knobLegendSize;
@@ -155,7 +144,11 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillStyle = this.knobTextColor;
-    this.ctx.fillText(this.value, this.centerX, this.centerY);
+    let value = this.value;
+    if (this.outputValue || this.outputValue === 0) {
+      value = this.outputValue;
+    }
+    this.ctx.fillText(String(value), this.centerX, this.centerY);
   }
 
   initNodes() {
@@ -170,7 +163,9 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
         this.sourceNode.nodes.push(node);
       }
     }
-    this.nodes = this.sourceNode.nodes;
+    if (this.sourceNode) {
+      this.nodes = this.sourceNode.nodes;
+    }
   }
 
   change(value = this.value) {
@@ -193,34 +188,9 @@ export class SynthesizerControlComponent implements AfterViewInit, OnChanges {
     }
 
     this.drawCanvas();
-    this.onChange.emit(this.value)
+    this.onChange.emit(this.value);
   }
 
-  mouseDown(event) {
-    this.mouseIsDown = true;
-    this.mouseStart = {
-      x: event.layerX,
-      y: event.layerY
-    }
-  }
-
-  mouseUp(event) {
-    this.mouseIsDown = false;
-  }
-
-  mouseMove(event) {
-    if (this.mouseIsDown && event) {
-      const offset = {
-        x: event.layerX - this.mouseStart.x,
-        y: event.layerY - this.mouseStart.y
-      };
-      if (offset.y) {
-        const duration = this.max - this.min;
-        const newValue = this.value - ((offset.y * duration) * this.speed / 360);
-        this.change(newValue);
-      }
-    }
-  }
 
   getKnobRotation() {
     let duration = this.max - this.min;

@@ -4,20 +4,17 @@ import {
   Input,
   OnInit,
   Output,
-  OnChanges,
   SimpleChanges,
-  ChangeDetectionStrategy,
-  DoCheck, ChangeDetectorRef
+  ChangeDetectorRef
 } from '@angular/core';
 import { Synthesizer } from '../synthesizer.service';
 
 @Component({
   selector: 'app-piano-keys',
   templateUrl: './piano-keys.component.html',
-  styleUrls: ['./piano-keys.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./piano-keys.component.scss']
 })
-export class PianoKeysComponent implements OnInit, OnChanges, DoCheck {
+export class PianoKeysComponent implements OnInit {
   @Input() startOctave = 0;
   @Input() octaves = 3;
   @Input() latch = false;
@@ -70,23 +67,10 @@ export class PianoKeysComponent implements OnInit, OnChanges, DoCheck {
       this.synthesizer.on('playnote', (e) => {
         this.currentNote = e[0];
         this.currentOctave = e[1];
-        //  console.log(this.currentNote, this.currentOctave);
         this.ref.detectChanges();
       });
     }
-
   }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes) {
-      // console.log('ngOnChanges', changes);
-    }
-  }
-
-  ngDoCheck() {
-    // console.log('ngDoCheck', this.synthesizer);
-  }
-
 
   isBlackKey(key: string) {
     if (key.includes('#') || key === 'B') {
@@ -131,7 +115,7 @@ export class PianoKeysComponent implements OnInit, OnChanges, DoCheck {
       this.pressedKey = null;
       this.pressedOctave = null;
     }
-    this.onKeyUp.emit({note: key, octave})
+    this.onKeyUp.emit({note: key, octave});
   }
 
   toggleLatch() {
@@ -188,7 +172,7 @@ export class PianoKeysComponent implements OnInit, OnChanges, DoCheck {
     }
     this.pitchTimout = setTimeout(() => {
       this.updatePitch();
-    }, this.pitchSpeed / 100)
+    }, this.pitchSpeed / 100);
   }
 
 }

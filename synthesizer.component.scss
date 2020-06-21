@@ -25,47 +25,90 @@
       overflow-x: hidden;
       overflow-y: auto;
 
-      .synthesizer-oscs {
-        display: flex;
-        flex-direction: row;
+      .synthesizer-main-section {
 
-
-        .synthesizer-osc {
-          border-right: 1px solid $color-background-secondary;
-          flex: 1;
-
-          &:last-child {
-            border-right: none;
-          }
-        }
-      }
-
-      .synthesizer-lfos {
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid $color-background-secondary;
-
-        .synthesizer-lfo {
-          border-bottom: 1px solid $color-background-secondary;
-          flex: 1;
-
-          &:last-child {
-            border-bottom: none;
-          }
-        }
-      }
-
-      .synthesizer-osc-options {
         flex: 1;
 
+        position: relative;
+        display: flex;
 
-        .synthesizer-osc-option {
+
+        .synthesizer-oscs {
+          display: flex;
+          flex-direction: row;
+
+
+          .synthesizer-osc {
+            border-right: 1px solid $color-background-secondary;
+            flex: 1;
+
+            &:last-child {
+              border-right: none;
+            }
+          }
+        }
+
+        .synthesizer-lfos {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          border-left: 1px solid $color-background-secondary;
+
+          .synthesizer-lfo {
+            border-bottom: 1px solid $color-background-secondary;
+            flex: 1;
+
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+
+        .synthesizer-osc-options {
+          flex: 1;
+
+
+          .synthesizer-osc-option {
+
+          }
+        }
+      }
+
+      .synthesizer-nodes-section {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+
+        .synthesizer-nodes-navigation {
+          display: flex;
+
+          button {
+            flex: 1;
+          }
 
         }
       }
+
+
     }
 
+  }
 
+  .synthesizer-options {
+    width: 100%;
+
+    .synthesizer-settings {
+      display: flex;
+      width: 100%;
+
+      .synthesizer-settings-values {
+        flex: 1;
+      }
+
+      .synthesizer-option-buttons {
+        display: flex;
+      }
+    }
   }
 
   .synthesizer-keyboard {

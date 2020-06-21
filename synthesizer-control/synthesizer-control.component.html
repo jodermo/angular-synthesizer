@@ -10,18 +10,19 @@
        (mousedown)="mouseDown($event)"
        (mouseleave)="mouseUp($event);"
        (mouseup)="mouseUp($event)"
-       (mouseover)="showSlider = true"
+       (mouseover)="mouseOver($event)"
+       (mouseout)="mouseOut($event)"
   >
     <canvas #canvas></canvas>
     <div class="knob-value">
       <div class="knob-value-min">
-        {{min}}
+        {{outputMin || min}}
       </div>
       <div class="knob-value-half">
-        {{middleValue}}
+        {{outputMiddle || middleValue}}
       </div>
       <div class="knob-value-max">
-        {{max}}
+        {{outputMax || max}}
       </div>
       <div class="synthesizer-control-slider" *ngIf="showSlider">
         <mat-slider min="{{min}}" max="{{max}}" step="{{step}}" [(ngModel)]="value" (change)="change();"></mat-slider>

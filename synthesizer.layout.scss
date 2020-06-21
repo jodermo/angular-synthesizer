@@ -11,6 +11,10 @@ $color-hover-text-secondary: #ccc;
 $color-active-background-secondary: #00725f;
 $color-active-text-secondary: #fff;
 
+$color-transparent-light: rgba(255, 255, 255, 0.75);
+$color-transparent-dark: rgba(0, 0, 0, 0.75);
+
+
 $border-main: 1px solid $color-text-main;
 $border-secondary: 1px solid $color-active-background-secondary;
 
@@ -64,7 +68,7 @@ $color-key-black-border-left: #333;
 
 $key-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.75);
 
-$keyboard-min-height:  10rem;
+$keyboard-min-height: 12vh;
 
 app-synthesizer, .demo-app {
 
@@ -100,6 +104,8 @@ app-synthesizer, .demo-app {
 
 
   .checkbox {
+
+
     position: relative;
     width: $checkbox-size;
     height: $checkbox-size;
@@ -107,7 +113,7 @@ app-synthesizer, .demo-app {
     padding: $checkbox-border-width;
     cursor: pointer;
     display: inline-block;
-    border-radius: 50%;
+    border-radius: $checkbox-border-width;
     flex: 0 $checkbox-size;
     z-index: 2;
 
@@ -117,20 +123,19 @@ app-synthesizer, .demo-app {
       display: block;
       width: 100%;
       height: 100%;
-      background: $color-active-background-secondary;
-      border-radius: 50%;
+      background: $color-background-main;
+      border-radius: $checkbox-border-width - 1;
       transition: all .5s, ease;
     }
 
     &:after {
-      content: '✔';
+      content: '';
       position: absolute;
       display: block;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
-      color: $color-active-background-main;
       text-align: center;
       transform: scale(0, 0);
       transition: all .5s, ease;
@@ -138,7 +143,7 @@ app-synthesizer, .demo-app {
 
     &.checked, &.selected, &.active {
       &:before {
-        background: $color-background-main;
+        background: $color-active-background-main;
       }
 
       &:after {
@@ -152,6 +157,29 @@ app-synthesizer, .demo-app {
 
     &.passive {
       pointer-events: none !important;
+    }
+
+    &.checkmark {
+      border-radius: 50%;
+
+
+      &:before {
+        content: '';
+        border-radius: 50%;
+        background: $color-active-background-secondary;
+      }
+
+      &:after {
+        content: '✔';
+        background: none;
+        color: $color-active-background-main;
+      }
+
+      &.checked, &.selected, &.active {
+        &:before {
+          background: $color-background-main;
+        }
+      }
     }
   }
 
