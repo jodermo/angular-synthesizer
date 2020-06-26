@@ -1,5 +1,6 @@
 <div class="synthesizer-sequencer"
      [ngClass]="{connecting:(sequencer.synthesizer.connectNode === sequencer), active:(sequencer.active)}"
+     *ngIf="sequencer.ready"
 >
   <div class="synthesizer-sequencer-header">
     <div class="checkbox" [ngClass]="{active:(sequencer.active)}" (click)="sequencer.toggleActive()"></div>
@@ -14,38 +15,20 @@
        (mouseover)="showOptions = true;"
        (mouseout)="showOptions = false;"
   >
-    <app-waveform-canvas *ngIf="sequencer.currentWaveform" [type]="sequencer.currentWaveform"
-                         [amplitude]="amplitude" [frequency]="rate"
-    ></app-waveform-canvas>
-    <div class="synthesizer-sequencer-waveform-options" [ngClass]="{active:(showOptions)}">
-      <app-synthesizer-control
-        [min]="0"
-        [max]="15"
-        [step]="1"
-        [value]="rate - 1"
-        [outputMin]="1"
-        [outputMiddle]="8"
-        [outputMax]="16"
-        [outputValue]="rate"
-        [default]="1"
-        (onChange)="rate = $event + 1;"
-      ></app-synthesizer-control>
-      <app-synthesizer-control
-        [min]="0"
-        [max]="100"
-        [step]="1"
-        [value]="amplitude"
-        [default]="100"
-        (onChange)="amplitude = $event;"
-      ></app-synthesizer-control>
-    </div>
+    <app-sequencer-canvas *ngIf="sequencer.values" [values]="sequencer.values"
+                          (onValue)="sequencer.value($event.int, $event.value)"></app-sequencer-canvas>
   </div>
-  <div class="synthesizer-sequencer-waveforms">
-    <button *ngFor="let waveform of sequencer.waveforms"
-            [ngClass]="{active:(waveform === sequencer.currentWaveform)}"
-            (click)="sequencer.waveform(waveform)"
-    >
-      {{waveform}}
-    </button>
+  <div class="synthesizer-sequencer-waveform-options" [ngClass]="{active:(showOptions)}">
+    <app-synthesizer-control
+      [min]="0"
+      [max]="3"
+      [step]="1"
+      [value]="(sequencer.steps - 1) / 4"
+      [outputMin]="4"
+      [outputMiddle]="8"
+      [outputMax]="16"
+      [outputValue]="sequencer.steps"
+      (onChange)="sequencer.steps = ($event + 1) * 4; sequencer.update()"
+    ></app-synthesizer-control>
   </div>
 </div>

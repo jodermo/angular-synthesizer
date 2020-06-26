@@ -2,6 +2,7 @@
      (mousemove)="mouseMove($event)"
      (mouseleave)="showSlider = false"
      [ngClass]="{'mouse-down': (mouseIsDown)}"
+     *ngIf="ready"
 >
   <div class="synthesizer-control-title" *ngIf="title">
     {{title}}

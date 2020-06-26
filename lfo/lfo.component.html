@@ -16,28 +16,29 @@
     <app-waveform-canvas *ngIf="lfo.currentWaveform" [type]="lfo.currentWaveform"
                          [amplitude]="amplitude" [frequency]="rate"
     ></app-waveform-canvas>
-    <div class="synthesizer-lfo-waveform-options" [ngClass]="{active:(showOptions)}">
-      <app-synthesizer-control
-        [min]="0"
-        [max]="15"
-        [step]="1"
-        [value]="rate - 1"
-        [outputMin]="1"
-        [outputMiddle]="8"
-        [outputMax]="16"
-        [outputValue]="rate"
-        [default]="1"
-        (onChange)="rate = $event + 1;"
-      ></app-synthesizer-control>
-      <app-synthesizer-control
-        [min]="0"
-        [max]="100"
-        [step]="1"
-        [value]="amplitude"
-        [default]="100"
-        (onChange)="amplitude = $event;"
-      ></app-synthesizer-control>
-    </div>
+
+  </div>
+  <div class="synthesizer-lfo-waveform-options" [ngClass]="{active:(showOptions)}">
+    <app-synthesizer-control
+      [min]="0"
+      [max]="15"
+      [step]="1"
+      [value]="rate - 1"
+      [outputMin]="1"
+      [outputMiddle]="8"
+      [outputMax]="16"
+      [outputValue]="rate"
+      [default]="1"
+      (onChange)="rate = $event + 1;"
+    ></app-synthesizer-control>
+    <app-synthesizer-control
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      [value]="amplitude"
+      [default]="100"
+      (onChange)="amplitude = $event;"
+    ></app-synthesizer-control>
   </div>
   <div class="synthesizer-lfo-waveforms">
     <button *ngFor="let waveform of lfo.waveforms"

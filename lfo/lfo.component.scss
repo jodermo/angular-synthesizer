@@ -38,23 +38,6 @@
     flex: 1;
     display: flex;
     padding: $padding-small 0;
-
-    .synthesizer-lfo-waveform-options {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
-      opacity: .1;
-      pointer-events: none;
-      transition: all .25s ease;
-
-      &.active {
-        opacity: 1;
-        pointer-events: all;
-        background: $color-transparent-dark;
-      }
-    }
   }
 
   .synthesizer-lfo-options {

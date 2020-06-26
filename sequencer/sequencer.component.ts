@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LFO, Sequencer } from '../synthesizer.service';
+import { LFO, Sequencer, SequencerValue } from '../synthesizer.service';
 
 @Component({
   selector: 'app-sequencer',
@@ -8,8 +8,6 @@ import { LFO, Sequencer } from '../synthesizer.service';
 })
 export class SequencerComponent implements OnInit {
   @Input() sequencer: Sequencer;
-  @Input() amplitude = 100;
-  @Input() rate = 1;
 
   showOptions = false;
 
@@ -23,5 +21,6 @@ export class SequencerComponent implements OnInit {
   connect() {
     this.sequencer.synthesizer.connectNode = this.sequencer;
   }
+
 
 }

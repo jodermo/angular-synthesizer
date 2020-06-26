@@ -16,6 +16,8 @@ import { FrequencyFilterCanvasComponent } from './synthesizer-canvas/frequency-f
 import { WaveformCanvasComponent } from './synthesizer-canvas/waveform-canvas/waveform-canvas.component';
 import { SequencerComponent } from './sequencer/sequencer.component';
 import { SequencerCanvasComponent } from './synthesizer-canvas/sequencer-canvas/sequencer-canvas.component';
+import { OscEffectControlComponent } from './osc-effect-control/osc-effect-control.component';
+import { OscFilterComponent } from './osc-filter/osc-filter.component';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import { SequencerCanvasComponent } from './synthesizer-canvas/sequencer-canvas/
     FrequencyFilterCanvasComponent,
     WaveformCanvasComponent,
     SequencerComponent,
-    SequencerCanvasComponent
+    SequencerCanvasComponent,
+    OscEffectControlComponent,
+    OscFilterComponent
   ],
   imports: [
     CommonModule,

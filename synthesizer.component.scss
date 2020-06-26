@@ -48,21 +48,6 @@
           }
         }
 
-        .synthesizer-lfos {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          border-left: 1px solid $color-background-secondary;
-
-          .synthesizer-lfo {
-            border-bottom: 1px solid $color-background-secondary;
-            flex: 1;
-
-            &:last-child {
-              border-bottom: none;
-            }
-          }
-        }
 
         .synthesizer-osc-options {
           flex: 1;
@@ -78,6 +63,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
+        border-left: 1px solid $color-background-secondary;
 
         .synthesizer-nodes-navigation {
           display: flex;
@@ -86,6 +72,22 @@
             flex: 1;
           }
 
+        }
+
+        .synthesizer-lfos, .synthesizer-sequencers {
+          flex: 1;
+
+          .synthesizer-lfo, .synthesizer-sequencer {
+            border-bottom: 1px solid $color-background-secondary;
+
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+
+          & > button {
+            width: 100%;
+          }
         }
       }
 

@@ -272,7 +272,12 @@ export class OSC {
   audioLoadStart;
   audioLoadOffset;
 
+
+  controlViews = ['controls', 'filter'];
+  controlView = this.controlViews[0];
+
   synthesizer: Synthesizer;
+
   effects: AudioEffects;
   compressor: AudioEffectNode;
 
@@ -280,7 +285,7 @@ export class OSC {
   active = false;
   paused = true;
   started = false;
-
+  ready = false;
 
   constructor(public audioContext: AudioContext, public id = null, waveform = 'sine') {
 
@@ -288,7 +293,7 @@ export class OSC {
     this.effects = new AudioEffects(this.audioContext, null, this.osc);
     this.compressor = this.effects.compressor;
     this.update();
-
+    this.ready = true;
 
   }
 
@@ -510,24 +515,39 @@ export class Sequencer {
   type = 'seq';
   active = true;
   synthesizer: Synthesizer;
-  waveforms = [
-    'sine',
-    'square',
-    'sawtooth',
-    'triangle'
-  ];
-  currentWaveform = this.waveforms[0];
-
+  steps = 4;
+  stepsMin = 4;
+  stepsMax = 64;
+  ready = false;
+  values = [];
+  allValues = [];
 
   constructor(public id = null) {
+    this.update();
+    this.ready = true;
   }
 
   update() {
-    this.waveform();
+    this.updateValues();
   }
 
-  waveform(waveform = this.currentWaveform) {
-    return this.currentWaveform = waveform;
+  updateValues() {
+    if (this.steps > this.values.length) {
+      const length = this.steps - this.values.length;
+      for (let i = 0; i < length; i++) {
+        const value = this.value(this.values.length - 1 + i);
+        this.values.push(value);
+      }
+    } else if (this.steps < this.values.length) {
+      const length = this.values.length - this.steps;
+      this.values.splice(this.steps - 1, length);
+    }
+  }
+
+  value(int, value: number = this.allValues[int] || 0) {
+    this.allValues[int] = value || 0;
+    this.values[int] = this.allValues[int];
+    return this.allValues[int];
   }
 
   toggleActive() {
@@ -554,6 +574,11 @@ export class SequencerSaveData {
   currentWaveform = 'sine';
   active = false;
   amplitude = 100;
+}
+
+export class SequencerValue {
+  int: number;
+  value: number;
 }
 
 export class AudioEffects {
@@ -681,7 +706,7 @@ export class AudioEffectNode {
     this.currentValue = value;
     this.do('valueChange', value, options);
     return this.currentValue;
-  };
+  }
 
   constructor(public audioContext: AudioContext, public nodeType: string, public osc: any = null) {
     if (nodeType === 'gain') {
@@ -723,12 +748,12 @@ export class AudioEffectNode {
       };
       this.audioNode = this.audioContext.createWaveShaper();
       this.min = 0;
-      this.max = 1000;
+      this.max = 10000;
       this.step = 1;
       this.default = 0;
       this.on('valueChange', (value = this.currentValue, options = null) => {
         this.audioNode.curve = makeDistortionCurve(value);
-        this.audioNode.oversample = '4x';
+        this.audioNode.oversample = '8x';
         return this.currentValue = value;
       });
     }
@@ -753,8 +778,8 @@ export class AudioEffectNode {
     if (nodeType === 'delay') {
       this.audioNode = this.audioContext.createDelay();
       this.min = 0;
-      this.max = 16000;
-      this.step = 1;
+      this.max = 1;
+      this.step = .01;
       this.default = 0;
       this.on('valueChange', (value = this.currentValue, options = null) => {
         this.audioNode.delayTime.setValueAtTime(value, this.audioContext.currentTime);
@@ -806,6 +831,7 @@ export class AudioEffectNode {
         this.osc.connect(this.audioNode);
         this.oscConnected = true;
       }
+
       this.audioNode.connect(this.audioContext.destination);
 
       this.connected = true;

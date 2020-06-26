@@ -51,9 +51,12 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   showSlider = false;
   fixedValue = 0;
 
+  ready = false;
+
   onInit() {
     this.initMiddleValue();
     this.initNodes();
+
   }
 
   onChanges() {
@@ -87,6 +90,9 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   connectNode(node: SynthesizerNode, source: any, type: string = null) {
     node.source = source;
     node.type = type;
+    if (this.synthesizer) {
+      this.synthesizer.connectNode = null;
+    }
     this.onConnectNode.emit(node);
   }
 
@@ -166,6 +172,7 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
     if (this.sourceNode) {
       this.nodes = this.sourceNode.nodes;
     }
+    this.change();
   }
 
   change(value = this.value) {
@@ -186,7 +193,7 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
     } else {
       this.value = Math.floor(this.value);
     }
-
+    this.ready = true;
     this.drawCanvas();
     this.onChange.emit(this.value);
   }

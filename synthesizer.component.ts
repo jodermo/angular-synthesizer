@@ -22,6 +22,7 @@ export class SynthesizerComponent implements OnInit {
   nodesTabs = ['LFO', 'Sequencer'];
   nodesTab = this.nodesTabs[0];
 
+
   constructor(public audioEditor: SynthesizerService) {
     this.synthesizer = new Synthesizer(3, 1, 1);
     if (this.synthesizer.oscs) {
@@ -54,7 +55,7 @@ export class SynthesizerComponent implements OnInit {
   }
 
   selectSequencer(sequencer: Sequencer) {
-    this.currentLfo = sequencer;
+    this.currentSequencer = sequencer;
   }
 
 

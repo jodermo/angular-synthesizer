@@ -39,11 +39,13 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
 
   mouseOver(event) {
     this.mouseIsOver = true;
+    this.updateCanvas();
     this.onMouseOver(event);
   }
 
   mouseOut(event) {
     this.mouseIsOver = false;
+    this.updateCanvas();
     this.onMouseOut(event);
   }
 
@@ -53,11 +55,13 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
       x: event.layerX,
       y: event.layerY
     };
+    this.updateCanvas();
     this.onMouseDown(event);
   }
 
   mouseUp(event) {
     this.mouseIsDown = false;
+    this.updateCanvas();
     this.onMouseUp(event);
   }
 
@@ -66,6 +70,7 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
       x: event.layerX - this.mouseStart.x,
       y: event.layerY - this.mouseStart.y
     };
+    this.updateCanvas();
     this.onMouseMove(event);
   }
 

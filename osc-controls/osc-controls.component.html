@@ -1,16 +1,10 @@
-<div class="synthesizer-osc-controls" *ngIf="osc" [ngClass]="{active:(osc.active)}">
-  <div class="synthesizer-osc-control" *ngFor="let effect of osc.effectNodes()">
-    <app-synthesizer-control
-      [synthesizer]="osc.synthesizer"
-      [sourceNode]="effect"
-      [title]="effect.nodeType"
-      [min]="effect.min"
-      [max]="effect.max"
-      [step]="effect.step"
-      [value]="effect.currentValue || 0"
-      [default]="effect.default"
-      (onChange)="effect.currentValue = $event; effect.value(effect.currentValue)"
-      (onConnectNode)="connectNode($event, effect)"
-    ></app-synthesizer-control>
+<div class="synthesizer-osc-controls" *ngIf="osc" [ngClass]="{active:(osc && osc.active)}">
+  <div class="synthesizer-osc-control">
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.attack"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.knee"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.ratio"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.release"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.delay"></app-osc-effect-control>
   </div>
 </div>
+

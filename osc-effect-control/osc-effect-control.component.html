@@ -1,0 +1,12 @@
+<app-synthesizer-control
+  [synthesizer]="synthesizer"
+  [sourceNode]="effect"
+  [title]="effect.nodeType"
+  [min]="effect.min"
+  [max]="effect.max"
+  [step]="effect.step"
+  [value]="effect.currentValue || 0"
+  [default]="effect.default"
+  (onChange)="effect.currentValue = $event; effect.value(effect.currentValue)"
+  (onConnectNode)="connectNode($event, effect)"
+></app-synthesizer-control>

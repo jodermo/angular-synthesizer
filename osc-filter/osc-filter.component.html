@@ -1,0 +1,9 @@
+<div class="synthesizer-osc-controls" *ngIf="osc" [ngClass]="{active:(osc && osc.active)}">
+  <div class="synthesizer-osc-control">
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.distortion"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.biquadFilter"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.convolver"></app-osc-effect-control>
+    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.threshold"></app-osc-effect-control>
+  </div>
+</div>
+

@@ -9,7 +9,16 @@
                [ngClass]="{selected:(currentOsc === osc)}"
           >
             <app-osc [osc]="osc"></app-osc>
-            <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+            <div>
+              <div class="osc-control-navigation">
+                <button *ngFor="let view of osc.controlViews" (click)="osc.controlView = view"
+                        [ngClass]="{active:(osc.controlView === view)}"
+                >{{view}}</button>
+              </div>
+              <app-osc-controls *ngIf="osc.controlView ===  'controls'" [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+              <app-osc-filter *ngIf="osc.controlView ===  'filter'" [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-filter>
+            </div>
+
           </div>
         </div>
       </div>
@@ -27,17 +36,17 @@
           >
             <app-lfo [lfo]="lfo"></app-lfo>
           </div>
-          <button (click)="synthesizer.addLfo()">+</button>
+          <button class="btn-new synthesizer-new-lfo" (click)="synthesizer.addLfo()">+</button>
         </div>
         <div class="synthesizer-sequencers" *ngIf="nodesTab === 'Sequencer'">
           <div *ngFor="let sequencer of synthesizer.sequencers; let i = index"
-               class="synthesizer-lfo"
+               class="synthesizer-sequencer"
                (click)="selectSequencer(sequencer)"
                [ngClass]="{selected:(currentSequencer === sequencer)}"
           >
             <app-sequencer [sequencer]="sequencer"></app-sequencer>
           </div>
-          <button (click)="synthesizer.addSequencer()">+</button>
+          <button class="btn-new synthesizer-new-sequencer" (click)="synthesizer.addSequencer()">+</button>
         </div>
       </div>
     </div>
@@ -59,7 +68,7 @@
       <div class="synthesizer-option-buttons">
         <button class="synthesizer-settings-reset" (click)="synthesizer.reset()">↺</button>
         <button class="synthesizer-settings-save" (click)="synthesizer.save()">💾</button>
-        <button class="synthesizer-settings-save"  (click)="showSettings = !showSettings"
+        <button class="synthesizer-settings-save" (click)="showSettings = !showSettings"
                 [ngClass]="{active:(showSettings)}">
           <span *ngIf="!showSettings">...</span>
           <span *ngIf="showSettings">▼</span>

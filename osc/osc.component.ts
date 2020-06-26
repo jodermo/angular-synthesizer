@@ -11,17 +11,19 @@ export class OscComponent implements AfterViewInit {
 
   @Output() onConnectNode = new EventEmitter<any>();
 
+  ready = false;
+
   constructor() {
   }
 
   ngAfterViewInit(): void {
-
+    this.ready = true;
   }
 
 
   connectNode(node: SynthesizerNode, target) {
 
-    let exist = false
+    let exist = false;
     for (const nodeTarget of node.targets) {
       if (nodeTarget === target) {
         exist = true;
