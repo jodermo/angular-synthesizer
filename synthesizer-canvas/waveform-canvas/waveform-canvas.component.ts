@@ -25,6 +25,7 @@ export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
     if (amplitude) {
       amplitude--;
     }
+    ctx.lineWidth = this.lineWidth;
     ctx.strokeStyle = this.layout.colors.default.main;
     ctx.moveTo(0, this.height / 2);
     ctx.lineTo(this.width, this.height / 2);

@@ -1,9 +1,11 @@
 @import "../synthesizer.layout";
 
 .synthesizer-osc {
+  position: relative;
   opacity: .5;
 
   .synthesizer-osc-header {
+    position: absolute;
     display: flex;
     justify-content: center;
     cursor: pointer;
@@ -21,10 +23,33 @@
 
   }
 
-  .synthesizer-osc-waveforms {
+  .synthesizer-osc-waveform {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     display: flex;
 
-    .synthesizer-osc-waveform {
+  }
+
+
+  .synthesizer-osc-options {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    app-waveform-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .synthesizer-osc-waveforms {
+    position: relative;
+    display: flex;
+    z-index: 2;
+
+    .synthesizer-osc-waveforms-item {
       flex: 1;
     }
   }

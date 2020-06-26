@@ -10,11 +10,13 @@ import { AudioEffectNode, Synthesizer } from '../synthesizer.service';
 export class OscEffectControlComponent extends OscComponent {
   @Input() effect: AudioEffectNode;
   @Input() synthesizer: Synthesizer;
+
   // tslint:disable-next-line:use-lifecycle-interface
+
+
   ngAfterViewInit(): void {
     if (this.effect && !this.osc) {
       this.osc = this.effect.osc;
     }
-
   }
 }

@@ -9,7 +9,7 @@ import { SynthesizerLayout } from '../synthesizer.service';
 export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
   @ViewChild('canvas', {static: false}) canvasRef: ElementRef;
   @Input() type;
-
+  @Input() lineWidth = 2;
   layout: SynthesizerLayout = new SynthesizerLayout();
 
   canvas: HTMLCanvasElement;
@@ -78,12 +78,15 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
     if (this.canvasRef) {
       this.canvas = this.canvasRef.nativeElement;
       this.ctx = this.canvas.getContext('2d');
+
       this.updateCanvas();
     }
   }
 
   updateCanvas() {
+
     if (this.ctx) {
+      this.ctx.lineWidth = this.lineWidth;
       this.canvasSize();
       this.drawCanvas();
     }

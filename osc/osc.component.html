@@ -2,15 +2,21 @@
   <div class="synthesizer-osc-header">
     <div class="checkbox" [ngClass]="{active:(osc.active)}"  (click)="osc.toggleActive()"></div>
     <h3  (click)="osc.toggleActive()">OSC <span *ngIf="osc.id">{{osc.id}}</span></h3>
-    <div class="synthesizer-osc-options" *ngIf="osc.ready && osc.effects">
-      <app-osc-effect-control  [synthesizer]="osc.synthesizer" [effect]="osc.effects.gain"></app-osc-effect-control>
-      <app-osc-effect-control  [synthesizer]="osc.synthesizer" [effect]="osc.effects.pan"></app-osc-effect-control>
-    </div>
+  </div>
+  <div class="synthesizer-osc-waveform">
+
+  </div>
+  <div class="synthesizer-osc-options" *ngIf="osc.ready && osc.effects">
     <app-waveform-canvas *ngIf="osc.currentWaveform" [type]="osc.currentWaveform"
-                         [amplitude]="osc.effects.gain.currentValue * 100"></app-waveform-canvas>
+                         [lineWidth]="5"
+                         [amplitude]="osc.effects.gain.currentValue * 100">
+    </app-waveform-canvas>
+    <app-osc-effect-control  [synthesizer]="osc.synthesizer" [effect]="osc.effects.gain"></app-osc-effect-control>
+    <app-osc-effect-control  [synthesizer]="osc.synthesizer" [effect]="osc.effects.pan"></app-osc-effect-control>
+
   </div>
   <div class="synthesizer-osc-waveforms">
-    <button class="synthesizer-osc-waveform" *ngFor="let waveform of osc.waveforms"
+    <button class="synthesizer-osc-waveforms-item" *ngFor="let waveform of osc.waveforms"
             [ngClass]="{active:(waveform === osc.currentWaveform)}"
             (click)="osc.waveform(waveform)"
     >
