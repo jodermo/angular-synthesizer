@@ -4,7 +4,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { AudioEffectNode, Synthesizer, SynthesizerNode } from '../synthesizer.service';
+import { AudioEffectNode, OSC, Synthesizer, SynthesizerNode } from '../synthesizer.service';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas/synthesizer-canvas.component';
 
 @Component({
@@ -14,6 +14,7 @@ import { SynthesizerCanvasComponent } from '../synthesizer-canvas/synthesizer-ca
 })
 export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   @Input() synthesizer: Synthesizer;
+  @Input() osc: OSC;
   @Input() sourceNode: AudioEffectNode;
   @Input() title;
   @Input() type = 'knob';
@@ -87,9 +88,11 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
     }
   }
 
-  connectNode(node: SynthesizerNode, source: any, type: string = null) {
+  connectNodeSource(node: SynthesizerNode, source: any, target: any) {
     node.source = source;
-    node.type = type;
+    if (source && source.targetNodes) {
+      source.targetNodes.push(target);
+    }
     if (this.synthesizer) {
       this.synthesizer.connectNode = null;
     }
@@ -111,6 +114,11 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
       if (this.min < 0) {
         this.middleValue = (this.max + this.min) / 2;
       }
+    }
+    if (!this.outputMin && this.sourceNode && this.sourceNode.nodeType === 'pan') {
+      this.outputMin = 'left';
+      this.outputMiddle = 'center';
+      this.outputMax = 'right';
     }
   }
 

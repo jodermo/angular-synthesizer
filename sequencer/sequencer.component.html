@@ -16,7 +16,9 @@
        (mouseout)="showOptions = false;"
   >
     <app-sequencer-canvas *ngIf="sequencer.values" [values]="sequencer.values"
-                          (onValue)="sequencer.value($event.int, $event.value)"></app-sequencer-canvas>
+                          [sequencer]="sequencer"
+                          [synthesizer]="sequencer.synthesizer"
+                          (onValue)="sequencer.sequenceValue($event.int, $event.value)"></app-sequencer-canvas>
   </div>
   <div class="synthesizer-sequencer-waveform-options" [ngClass]="{active:(showOptions)}">
     <app-synthesizer-control

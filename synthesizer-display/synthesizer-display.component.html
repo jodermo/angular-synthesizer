@@ -1,0 +1,23 @@
+<div class="synthesizer-display" *ngIf="synthesizer">
+  <div class="synthesizer-time">{{synthesizer.currentTime / 1000}} sec.</div>
+  <div class="synthesizer-beat">{{synthesizer.totalBeat['1']}} beats</div>
+  <div class="synthesizer-beat-preview" *ngIf="synthesizer.currentBeat">
+    <span class="synthesizer-beat-half">{{synthesizer.currentBeat['2']}}/2</span>
+    <span class="synthesizer-beat-quarter">{{synthesizer.currentBeat['4']}}/4</span>
+    <span class="synthesizer-beat-eighth">{{synthesizer.currentBeat['8']}}/8</span>
+    <span class="synthesizer-beat-sixteenth">{{synthesizer.currentBeat['16']}}/16</span>
+    <span class="synthesizer-beat-thirty-second">{{synthesizer.currentBeat['32']}}/32</span>
+    <span class="synthesizer-beat-sixty-fourth">{{synthesizer.currentBeat['64']}}/64</span>
+  </div>
+  <div class="synthesizer-beat-preview" *ngIf="synthesizer.totalBeat">
+    <span class="synthesizer-beat-half">{{synthesizer.totalBeat['2']}}/2</span>
+    <span class="synthesizer-beat-quarter">{{synthesizer.totalBeat['4']}}/4</span>
+    <span class="synthesizer-beat-eighth">{{synthesizer.totalBeat['8']}}/8</span>
+    <span class="synthesizer-beat-sixteenth">{{synthesizer.totalBeat['16']}}/16</span>
+    <span class="synthesizer-beat-thirty-second">{{synthesizer.totalBeat['32']}}/32</span>
+    <span class="synthesizer-beat-sixty-fourth">{{synthesizer.totalBeat['64']}}/64</span>
+  </div>
+  <div class="synthesizer-beat-line" *ngIf="synthesizer.currentBeat">
+    <div class="synthesizer-beat-preview-fill" [ngStyle]="{width:( synthesizer.currentBeat['%'] + '%')}"></div>
+  </div>
+</div>

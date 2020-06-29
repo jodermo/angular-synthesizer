@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +15,6 @@ export class SynthesizerService {
     const layer = new AudioLayer();
     this.layers.push(layer);
     return layer;
-  }
-
-  addSynthesizer(oscCount = 3) {
-    const synthesizer = new Synthesizer(oscCount);
-    this.synthesizers.push(synthesizer);
-    return synthesizer;
   }
 
 }
@@ -63,26 +57,36 @@ export class SynthesizerLayout {
 }
 
 export class Synthesizer {
-  audioContext: AudioContext;
-  oscs: OSC[] = [];
-  lfos: LFO[] = [];
-  sequencers: Sequencer[] = [];
-  connectNode: any;
+
+  restartOnTrigger = false;
+  paused = true;
+  isTone = false;
+  metronome = false;
   volume = 1;
   release = 250;
   delay = 0;
   currentPitch = 0;
   currentTempo = 120;
-  startTime;
+  startTime = 0;
   currentTime = 0;
   currentNote = 'C';
   currentOctave = 1;
+  totalBeat;
+  currentBeat;
+  beatString;
+
+
   manager = new SynthesizerManager(this);
   midi = new MIDIManager(this);
   callbacks: any = {};
-  paused = true;
+  audioContext: AudioContext;
+  oscs: OSC[] = [];
+  lfos: LFO[] = [];
+  sequencers: Sequencer[] = [];
+  connectNode: any;
 
-  constructor(public oscCount = 3, public lfoCount = 1, public sequencerCount = 1) {
+  constructor(public oscCount = 3, public lfoCount = 1, public sequencerCount = 1, private changeDetector: ChangeDetectorRef) {
+    this.restart();
     // tslint:disable-next-line:new-parens
     this.audioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext);
     for (let i = 0; i < this.oscCount; i++) {
@@ -98,6 +102,27 @@ export class Synthesizer {
       this.oscs[0].active = true;
     }
     this.manager.getLocalStorage();
+
+
+  }
+
+  valueChange() {
+    if (this.changeDetector) {
+      this.changeDetector.detectChanges();
+    }
+  }
+
+  update() {
+    for (const osc of this.oscs) {
+      osc.update();
+    }
+    for (const lfo of this.lfos) {
+      lfo.update();
+    }
+    for (const sequencer of this.sequencers) {
+      sequencer.update();
+    }
+    this.do('update', this.currentTime);
   }
 
   addOsc(id = 0) {
@@ -126,8 +151,18 @@ export class Synthesizer {
     }
     const sequencer = new Sequencer(id);
     sequencer.synthesizer = this;
+    sequencer.currentTime = this.currentTime;
+    sequencer.currentBeat = this.currentBeat;
     this.sequencers.push(sequencer);
     return sequencer;
+  }
+
+  setRestart(restart = this.restartOnTrigger) {
+    this.restartOnTrigger = restart;
+    if (restart) {
+      this.metronome = false;
+    }
+    this.restart();
   }
 
   play() {
@@ -138,10 +173,12 @@ export class Synthesizer {
 
   pause() {
     this.paused = true;
+    this.timeUpdate();
     this.do('pause', this.currentTime);
   }
 
   startTone() {
+
     for (const osc of this.oscs) {
       osc.start();
     }
@@ -150,6 +187,7 @@ export class Synthesizer {
   }
 
   stopTone() {
+    this.isTone = false;
     for (const osc of this.oscs) {
       osc.stop();
     }
@@ -159,9 +197,15 @@ export class Synthesizer {
   playNote(note = this.currentNote, octave = this.currentOctave) {
     this.currentNote = note.toLowerCase();
     this.currentOctave = octave;
+
+    if (this.restartOnTrigger && !this.isTone) {
+      this.restart();
+    }
+    this.isTone = true;
     for (const osc of this.oscs) {
       osc.playNote([this.currentNote, octave]);
     }
+    this.timeUpdate();
     this.do('playnote', [note, octave]);
   }
 
@@ -175,8 +219,33 @@ export class Synthesizer {
     this.do('triggernote', [note, octave, delay, release]);
   }
 
-  time(time = this.currentTime) {
-    this.currentTime = time;
+
+  restart() {
+    this.startTime = Date.now();
+    this.totalBeat = {
+      1: 0,
+      2: 0,
+      4: 0,
+      8: 0,
+      16: 0,
+      32: 0,
+      64: 0
+    };
+    this.currentBeat = {
+      '%': 0,
+      1: 1,
+      2: 1,
+      4: 1,
+      8: 1,
+      16: 1,
+      32: 1,
+      64: 1
+    };
+    this.timeUpdate();
+  }
+
+  time() {
+    this.timeUpdate();
     this.do('timechange', this.currentTime);
     return this.currentTime;
   }
@@ -213,9 +282,72 @@ export class Synthesizer {
       this.startTime = Date.now();
     }
     this.currentTime = Date.now() - this.startTime;
-    if (!this.paused) {
-      window.requestAnimationFrame(this.timeUpdate);
+    this.currentBeat['%'] = (((this.currentTime / this.currentTempo / 60) * 4) * 100) % 100;
+    const sixteenFourth = Math.floor(this.currentTime / 60 * this.currentTempo / 64);
+    if (this.totalBeat['64'] !== sixteenFourth) {
+      this.beatUpdate(sixteenFourth);
     }
+
+
+    if ((!this.paused && !this.restartOnTrigger) || this.isTone) {
+      window.requestAnimationFrame(() => {
+        this.timeUpdate();
+      });
+    }
+    this.update();
+  }
+
+  beatUpdate(sixteenFourth) {
+
+    this.totalBeat['64'] = sixteenFourth;
+    const sixteenFourthBeat = Math.floor(this.totalBeat['64'] % 64);
+    this.currentBeat['64'] = sixteenFourthBeat;
+    this.triggerBeat()['64']();
+
+    for (let i = 32; i > .5; i = i / 2) {
+
+      const beat = Math.floor(this.totalBeat[i * 2] / 2);
+      if (beat !== this.totalBeat[i]) {
+        this.totalBeat[i] = beat;
+        this.currentBeat[i] = Math.floor(beat % i) + 1;
+        this.triggerBeat()[i]();
+      }
+    }
+    this.beatString = this.totalBeat['1'] + ': ' + this.currentBeat['2'] + '/2 ' + this.currentBeat['4'] + '/4 ' + this.currentBeat['8'] + '/8 ' + this.currentBeat['16'] + '/16 ' + this.currentBeat['32'] + '/32 ' + this.currentBeat['64'] + '/64';
+    this.beatString += '  ' + this.currentTime / 1000 + 's ' + Math.floor(this.currentBeat['%']) + '%';
+
+  }
+
+  triggerBeat() {
+    return {
+      64: () => {
+
+      },
+      32: () => {
+
+      },
+      16: () => {
+
+      },
+      8: () => {
+        if (this.metronome) {
+          this.triggerNote('C', 1, 0, 60000 / this.currentTempo / 4);
+        }
+      },
+      4: () => {
+        if (this.metronome) {
+          this.triggerNote('C', 2, 0, 60000 / this.currentTempo / 4);
+        }
+      },
+      2: () => {
+
+      },
+      1: () => {
+        if (this.metronome) {
+          this.triggerNote('C', 3, 0, 60000 / this.currentTempo / 4);
+        }
+      }
+    };
   }
 
   on(callback, event) {
@@ -223,12 +355,23 @@ export class Synthesizer {
       this.callbacks[callback] = [];
     }
     this.callbacks[callback].push(event);
+    return event;
   }
 
-  do(callback, data) {
+  do(callback, data: any = null) {
     if (this.callbacks[callback]) {
       for (const event of this.callbacks[callback]) {
         event(data);
+      }
+    }
+  }
+
+  removeCallback(callback, event) {
+    if (this.callbacks[callback]) {
+      for (let i = 0; i < this.callbacks[callback].length; i++) {
+        if (this.callbacks[callback][i] === event) {
+          this.callbacks[callback].splice(i, 1);
+        }
       }
     }
   }
@@ -273,7 +416,7 @@ export class OSC {
   audioLoadOffset;
 
 
-  controlViews = ['controls', 'filter'];
+  controlViews = ['compressor', 'filter'];
   controlView = this.controlViews[0];
 
   synthesizer: Synthesizer;
@@ -283,16 +426,16 @@ export class OSC {
 
   volume = 1;
   active = false;
-  paused = true;
   started = false;
   ready = false;
 
   constructor(public audioContext: AudioContext, public id = null, waveform = 'sine') {
 
     this.osc = this.audioContext.createOscillator();
-    this.effects = new AudioEffects(this.audioContext, null, this.osc);
+    this.effects = new AudioEffects(this.audioContext, null, this);
     this.compressor = this.effects.compressor;
     this.update();
+    // tslint:disable-next-line:forin
     this.ready = true;
 
   }
@@ -308,6 +451,12 @@ export class OSC {
     this.pan();
   }
 
+  valueChange() {
+    if (this.synthesizer) {
+      this.synthesizer.valueChange();
+    }
+
+  }
 
   pitch(pitch = this.currentPitch) {
     this.currentPitch = pitch;
@@ -348,7 +497,7 @@ export class OSC {
     const nodes: AudioEffectNode[] = [];
     for (const key in this.effects) {
       if (key && this.effects[key] && key !== 'compressor' && key !== 'source' && this.effects[key].nodeType) {
-        const node = this.effects[key] as AudioEffectNode;
+        const node = this.effects[key];
         if (node) {
           nodes.push(node);
         }
@@ -390,7 +539,6 @@ export class OSC {
         this.audioContext.resume();
       }
       this.active = true;
-      this.paused = false;
     }
     for (const node of this.effectNodes()) {
       if (node.start) {
@@ -404,10 +552,6 @@ export class OSC {
   }
 
   stop(deactivate = false) {
-    if (!this.paused) {
-      this.audioContext.suspend();
-      this.paused = true;
-    }
     for (const node of this.effectNodes()) {
       if (node.stop) {
         node.stop();
@@ -454,34 +598,65 @@ export class OSC {
   }
 }
 
-export class OSCSaveData {
-  currentWaveform = 'sine';
-  active = false;
-}
 
-export class LFO {
-  // Low Frequency OSC
-  type = 'lfo';
+export class SynthesizerEffect {
+  type = 'effect';
   active = true;
   synthesizer: Synthesizer;
-  waveforms = [
-    'sine',
-    'square',
-    'sawtooth',
-    'triangle'
-  ];
-  currentWaveform = this.waveforms[0];
+  targetNodes: AudioEffectNode[] = [];
 
+  currentTime = 0;
+  currentValue = 0;
+  currentRate = 1;
+  currentAmplitude = 100;
+  currentMaxValue = 100;
+  reverse = false;
 
   constructor(public id = null) {
   }
 
   update() {
-    this.waveform();
+    if (this.synthesizer) {
+      this.currentTime = this.synthesizer.currentTime;
+    }
+    this.onUpdate();
+    this.updateValue();
+    this.updateTargetNodes();
   }
 
-  waveform(waveform = this.currentWaveform) {
-    return this.currentWaveform = waveform;
+  onUpdate() {
+
+  }
+
+  updateTargetNodes(value: number = this.currentValue) {
+
+    if (value && this.targetNodes.length) {
+      for (const node of this.targetNodes) {
+        if (node.addValue) {
+          node.addValue(node.currentValue + value);
+        }
+      }
+    }
+  }
+
+
+  updateValue() {
+    if (this.synthesizer && this.synthesizer.currentBeat) {
+      this.currentValue = this.percentToValue(this.synthesizer.currentBeat['%']);
+    }
+    return this.currentValue;
+  }
+
+  rate(rate = this.currentRate) {
+    return this.currentRate = rate;
+  }
+
+  amplitude(amplitude = this.currentAmplitude) {
+    return this.currentAmplitude = amplitude;
+  }
+
+  percentToValue(percent: number) {
+    return this.currentValue / percent * 100;
   }
 
   toggleActive() {
@@ -490,6 +665,59 @@ export class LFO {
     } else {
       this.active = false;
     }
+  }
+
+  remove() {
+
+  }
+
+}
+
+export class OSCSaveData {
+  currentWaveform = 'sine';
+  active = false;
+}
+
+export class LFO extends SynthesizerEffect {
+  // Low Frequency OSC
+  type = 'lfo';
+  waveforms = [
+    'sine',
+    'square',
+    'sawtooth',
+    'triangle'
+  ];
+  currentWaveform = this.waveforms[0];
+
+  onUpdate() {
+    this.waveform();
+  }
+
+  waveform(waveform = this.currentWaveform) {
+    return this.currentWaveform = waveform;
+  }
+
+  percentToValue(percent: number) {
+    let value = Math.sin(percent / 100 * this.currentRate * Math.PI * 2) * this.currentAmplitude;
+    if (this.currentWaveform === 'square') {
+      if (value < 0) {
+        value = -this.currentAmplitude;
+      } else {
+        value = this.currentAmplitude;
+      }
+    } else if (this.currentWaveform === 'sawtooth') {
+      value = this.currentAmplitude - (percent * this.currentRate % 100) * 2 * this.currentAmplitude / this.currentMaxValue;
+    } else if (this.currentWaveform === 'triangle') {
+      value = ((this.currentRate) * percent) % 100 * this.currentAmplitude / this.currentMaxValue * 4;
+      if (value > this.currentAmplitude) {
+        // tslint:disable-next-line:max-line-length
+        value = this.currentAmplitude - (((this.currentRate) * percent) % 100 * this.currentAmplitude / this.currentMaxValue * 4) + this.currentAmplitude;
+      }
+      if (value < -this.currentAmplitude) {
+        value = -value - this.currentAmplitude * 2;
+      }
+    }
+    return value;
   }
 
   remove() {
@@ -510,11 +738,9 @@ export class LFOSaveData {
   amplitude = 100;
 }
 
-export class Sequencer {
+export class Sequencer extends SynthesizerEffect {
   // Step Sequencer
   type = 'seq';
-  active = true;
-  synthesizer: Synthesizer;
   steps = 4;
   stepsMin = 4;
   stepsMax = 64;
@@ -522,20 +748,29 @@ export class Sequencer {
   values = [];
   allValues = [];
 
+  currentTime = 0;
+  currentBeat;
+
   constructor(public id = null) {
+    super(id);
     this.update();
     this.ready = true;
   }
 
-  update() {
+  onUpdate() {
+    if (this.synthesizer) {
+      this.currentTime = this.synthesizer.currentTime;
+      this.currentBeat = this.synthesizer.currentBeat;
+    }
     this.updateValues();
+    this.updateTargetNodes();
   }
 
   updateValues() {
     if (this.steps > this.values.length) {
       const length = this.steps - this.values.length;
       for (let i = 0; i < length; i++) {
-        const value = this.value(this.values.length - 1 + i);
+        const value = this.sequenceValue(this.values.length - 1 + i);
         this.values.push(value);
       }
     } else if (this.steps < this.values.length) {
@@ -544,18 +779,15 @@ export class Sequencer {
     }
   }
 
-  value(int, value: number = this.allValues[int] || 0) {
+  sequenceValue(int, value: number = this.allValues[int] || 0) {
     this.allValues[int] = value || 0;
     this.values[int] = this.allValues[int];
-    return this.allValues[int];
+    return this.values[int];
   }
 
-  toggleActive() {
-    if (!this.active) {
-      this.active = true;
-    } else {
-      this.active = false;
-    }
+  percentToValue(percent: number) {
+    const int = Math.round(this.values.length / 100 * percent);
+    return this.values[int];
   }
 
   remove() {
@@ -593,8 +825,8 @@ export class AudioEffects {
   compressor: AudioEffectNode;
   source;
 
+
   threshold = {
-    nodeType: 'threshold',
     min: -100,
     max: 0,
     step: 1,
@@ -602,10 +834,9 @@ export class AudioEffects {
       this.compressor.do('valueChange', 'threshold', value);
       return this.threshold.currentValue = value;
     }
-  } as AudioEffectNode;
+  };
 
   knee = {
-    nodeType: 'knee',
     min: 0,
     max: 1,
     step: .01,
@@ -614,10 +845,9 @@ export class AudioEffects {
       this.compressor.do('valueChange', 'knee', value);
       return this.compressor.currentValue;
     }
-  } as AudioEffectNode;
+  };
 
   ratio = {
-    nodeType: 'ratio',
     min: 1,
     max: 20,
     step: 1,
@@ -626,10 +856,9 @@ export class AudioEffects {
       this.compressor.do('valueChange', 'ratio', value);
       return this.compressor.currentValue;
     }
-  } as AudioEffectNode;
+  };
 
   attack = {
-    nodeType: 'attack',
     min: 0,
     max: 1,
     step: .01,
@@ -637,11 +866,16 @@ export class AudioEffects {
       this.compressor.value('attack', value);
       this.compressor.do('valueChange', 'attack', value);
       return this.compressor.currentValue;
+    },
+    connect: () => {
+      return this.compressor.connect();
+    },
+    disconnect: (value = this.compressor.value('attack')) => {
+      return this.compressor.disconnect();
     }
-  } as AudioEffectNode;
+  };
 
   release = {
-    nodeType: 'release',
     min: 0,
     max: 1,
     step: .01,
@@ -650,9 +884,9 @@ export class AudioEffects {
       this.compressor.do('valueChange', 'release', value);
       return this.compressor.currentValue;
     }
-  } as AudioEffectNode;
+  };
 
-  constructor(public audioContext, public media: HTMLMediaElement = null, osc: any = null) {
+  constructor(public audioContext, public media: HTMLMediaElement = null, osc: OSC) {
     if (this.media) {
       this.source = this.audioContext.createMediaElementSource(this.media);
     }
@@ -664,6 +898,11 @@ export class AudioEffects {
     this.delay = new AudioEffectNode(this.audioContext, 'delay', osc);
     this.compressor = new AudioEffectNode(this.audioContext, 'compressor', osc);
 
+    this.threshold = new AudioEffectNode(this.audioContext, 'threshold', osc, this.threshold);
+    this.knee = new AudioEffectNode(this.audioContext, 'knee', osc, this.knee);
+    this.ratio = new AudioEffectNode(this.audioContext, 'ratio', osc, this.ratio);
+    this.attack = new AudioEffectNode(this.audioContext, 'attack', osc, this.attack);
+    this.release = new AudioEffectNode(this.audioContext, 'release', osc, this.release);
   }
 
   set(effectName, value) {
@@ -706,9 +945,51 @@ export class AudioEffectNode {
     this.currentValue = value;
     this.do('valueChange', value, options);
     return this.currentValue;
-  }
+  };
 
-  constructor(public audioContext: AudioContext, public nodeType: string, public osc: any = null) {
+  connect: any = (force = false) => {
+    if (this.audioNode && !this.connected && (this.active || force)) {
+      if (this.source && this.source.connect) {
+        if (this.sourceConnected) {
+          this.source.disconnect(this.audioNode);
+          this.sourceConnected = false;
+        }
+        this.source.connect(this.audioContext.destination);
+      }
+      if (this.osc) {
+        this.osc.osc.connect(this.audioNode);
+        this.oscConnected = true;
+      }
+      if (this.audioContext) {
+        this.audioNode.connect(this.audioContext.destination);
+      }
+      this.connected = true;
+      this.active = true;
+    } else if (!this.active) {
+      this.disconnect();
+    }
+  };
+
+  disconnect: any = (force = false) => {
+    if (this.osc && this.oscConnected) {
+      this.osc.osc.disconnect(this.audioNode);
+      this.oscConnected = false;
+    }
+    if (this.source && this.sourceConnected) {
+      this.source.disconnect(!this.audioContext.destination);
+      this.source.connect(this.audioNode);
+      this.sourceConnected = true;
+    }
+    if (this.connected && this.audioContext) {
+      this.audioNode.disconnect(this.audioContext.destination);
+    }
+    if (force) {
+      this.active = false;
+    }
+    this.connected = false;
+  };
+
+  constructor(public audioContext: AudioContext, public nodeType: string, public osc: OSC = null, effectOptions: any = null) {
     if (nodeType === 'gain') {
       this.audioNode = this.audioContext.createGain();
       this.min = 0;
@@ -753,7 +1034,7 @@ export class AudioEffectNode {
       this.default = 0;
       this.on('valueChange', (value = this.currentValue, options = null) => {
         this.audioNode.curve = makeDistortionCurve(value);
-        this.audioNode.oversample = '8x';
+        this.audioNode.oversample = '4x';
         return this.currentValue = value;
       });
     }
@@ -788,15 +1069,40 @@ export class AudioEffectNode {
 
     if (nodeType === 'compressor') {
       this.audioNode = this.audioContext.createDynamicsCompressor();
+      this.min = 1;
+      this.max = 20;
+      this.step = .1;
+      this.default = 1;
       this.on('valueChange', (type, value) => {
         if (this.audioNode[type]) {
           this.audioNode[type].setValueAtTime(value, this.audioContext.currentTime);
         }
       });
     }
+    if (effectOptions) {
+      // tslint:disable-next-line:forin
+      for (const key in effectOptions) {
+        this[key] = effectOptions[key];
+        // console.log(nodeType, key, effectOptions[key]);
+      }
+    }
+    this.on('valueChange', (value) => {
+      if (this.osc) {
+        this.osc.valueChange();
+      }
+    });
     this.value(this.default);
     this.connect();
     this.disconnect();
+  }
+
+  addValue(value: number) {
+    value = value * (this.max - this.min) / 100;
+    value = this.currentValue + value;
+    if (value > this.min && value < this.max) {
+      this.value(value);
+    }
+    return value;
   }
 
   type(type = this.audioNode.type) {
@@ -817,50 +1123,6 @@ export class AudioEffectNode {
   }
 
 
-  connect(force = false) {
-
-    if (!this.connected && (this.active || force)) {
-      if (this.source) {
-        if (this.sourceConnected) {
-          this.source.disconnect(this.audioNode);
-          this.sourceConnected = false;
-        }
-        this.source.connect(this.audioContext.destination);
-      }
-      if (this.osc) {
-        this.osc.connect(this.audioNode);
-        this.oscConnected = true;
-      }
-
-      this.audioNode.connect(this.audioContext.destination);
-
-      this.connected = true;
-      this.active = true;
-    } else if (!this.active) {
-      this.disconnect();
-    }
-
-  }
-
-  disconnect(force = false) {
-    if (this.osc && this.oscConnected) {
-      this.osc.disconnect(this.audioNode);
-      this.oscConnected = false;
-    }
-    if (this.source && this.sourceConnected) {
-      this.source.disconnect(!this.audioContext.destination);
-      this.source.connect(this.audioNode);
-      this.sourceConnected = true;
-    }
-    if (this.connected) {
-      this.audioNode.disconnect(this.audioContext.destination);
-    }
-    if (force) {
-      this.active = false;
-    }
-    this.connected = false;
-  }
-
   on(callback, event) {
     if (this.callbacks[callback]) {
       this.callbacks[callback].push(event);
@@ -879,8 +1141,7 @@ export class AudioEffectNode {
 
 export class SynthesizerNode {
   type: string;
-  source: any;
-  targets: AudioEffectNode[] = [];
+  source: SynthesizerEffect;
   value = null;
 
   constructor() {
@@ -890,11 +1151,16 @@ export class SynthesizerNode {
     this.value = value || 0;
   }
 
+  update() {
+    if (this.source && this.source.synthesizer && this.source.synthesizer.currentBeat) {
+      this.value = this.source.percentToValue(this.source.synthesizer.currentBeat['%']);
+    }
+  }
+
   clear() {
     if (confirm('clear connections')) {
       this.type = null;
       this.source = null;
-      this.targets = [];
       this.value = null;
     }
   }

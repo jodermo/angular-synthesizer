@@ -24,4 +24,5 @@ export class LfoComponent implements OnInit {
     this.lfo.synthesizer.connectNode = this.lfo;
   }
 
+
 }

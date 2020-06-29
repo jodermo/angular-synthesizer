@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LFO, OSC, Sequencer, Synthesizer, SynthesizerService } from './synthesizer.service';
 
 
@@ -23,8 +23,8 @@ export class SynthesizerComponent implements OnInit {
   nodesTab = this.nodesTabs[0];
 
 
-  constructor(public audioEditor: SynthesizerService) {
-    this.synthesizer = new Synthesizer(3, 1, 1);
+  constructor(public audioEditor: SynthesizerService, private cdRef: ChangeDetectorRef) {
+    this.synthesizer = new Synthesizer(3, 1, 1, cdRef);
     if (this.synthesizer.oscs) {
       this.currentOsc = this.synthesizer.oscs[0];
     }

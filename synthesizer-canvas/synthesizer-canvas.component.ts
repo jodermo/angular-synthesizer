@@ -1,15 +1,16 @@
-import { Component, ElementRef, AfterViewInit, ViewChild, OnChanges, SimpleChanges, Output, Input } from '@angular/core';
-import { SynthesizerLayout } from '../synthesizer.service';
+import { Component, ElementRef, AfterViewInit, ViewChild, OnChanges, SimpleChanges, Output, Input, OnDestroy } from '@angular/core';
+import { Synthesizer, SynthesizerLayout } from '../synthesizer.service';
 
 @Component({
   selector: 'app-synthesizer-canvas',
   templateUrl: './synthesizer-canvas.component.html',
   styleUrls: ['./synthesizer-canvas.component.scss']
 })
-export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
+export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('canvas', {static: false}) canvasRef: ElementRef;
   @Input() type;
   @Input() lineWidth = 2;
+  @Input() synthesizer: Synthesizer;
   layout: SynthesizerLayout = new SynthesizerLayout();
 
   canvas: HTMLCanvasElement;
@@ -25,16 +26,27 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
   mouseStart = {x: 0, y: 0};
   mouseOffset = {x: 0, y: 0};
 
+  updateEvent;
+
   constructor() {
   }
 
   ngAfterViewInit(): void {
     this.initCanvas();
+
+    setTimeout(() => {
+      this.updateCanvas();
+    }, 0);
   }
 
   ngOnChanges(changes: SimpleChanges) {
+
     this.onChanges();
     this.updateCanvas();
+  }
+
+  ngOnDestroy() {
+    this.destroyCanvas();
   }
 
   mouseOver(event) {
@@ -78,19 +90,28 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
     if (this.canvasRef) {
       this.canvas = this.canvasRef.nativeElement;
       this.ctx = this.canvas.getContext('2d');
-
       this.updateCanvas();
+    }
+    if (this.synthesizer) {
+      this.updateEvent = this.synthesizer.on('update', () => {
+        this.updateCanvas();
+      });
     }
   }
 
   updateCanvas() {
-
     if (this.ctx) {
       this.ctx.lineWidth = this.lineWidth;
       this.canvasSize();
+      this.ctx.clearRect(0, 0, this.width, this.height);
       this.drawCanvas();
     }
+  }
 
+  destroyCanvas() {
+    if (this.synthesizer && this.updateEvent) {
+      this.synthesizer.removeCallback('update', this.updateEvent);
+    }
   }
 
   canvasSize() {
@@ -106,6 +127,22 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges {
 
   drawCanvas(ctx = this.ctx) {
     this.onDrawCanvas(ctx);
+  }
+
+
+  drawTimePosition(ctx = this.ctx) {
+
+    if (this.synthesizer && this.synthesizer.currentBeat && this.synthesizer.currentBeat['%']) {
+      ctx.fillStyle = this.layout.colors.default.main;
+      ctx.fillRect(this.width * (this.synthesizer.currentBeat['%'] / 100), 0, this.lineWidth, this.height);
+      this.onDrawTimePosition(this.synthesizer.currentBeat['%']);
+    }
+
+  }
+
+  @Output()
+  onDrawTimePosition(percent: number) {
+    // stuff when time position changes
   }
 
   @Output()

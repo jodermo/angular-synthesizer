@@ -14,7 +14,10 @@
        (mouseout)="showOptions = false;"
   >
     <app-waveform-canvas *ngIf="lfo.currentWaveform" [type]="lfo.currentWaveform"
-                         [amplitude]="amplitude" [frequency]="rate"
+                         [synthesizer]="lfo.synthesizer"
+                         [lfo]="lfo"
+                         [amplitude]="lfo.currentAmplitude"
+                         [frequency]="lfo.currentRate"
     ></app-waveform-canvas>
 
   </div>
@@ -23,21 +26,21 @@
       [min]="0"
       [max]="15"
       [step]="1"
-      [value]="rate - 1"
+      [value]="lfo.currentRate - 1"
       [outputMin]="1"
       [outputMiddle]="8"
       [outputMax]="16"
       [outputValue]="rate"
       [default]="1"
-      (onChange)="rate = $event + 1;"
+      (onChange)="lfo.rate($event + 1);"
     ></app-synthesizer-control>
     <app-synthesizer-control
       [min]="0"
       [max]="100"
       [step]="1"
-      [value]="amplitude"
+      [value]="lfo.currentAmplitude"
       [default]="100"
-      (onChange)="amplitude = $event;"
+      (onChange)="lfo.amplitude($event );"
     ></app-synthesizer-control>
   </div>
   <div class="synthesizer-lfo-waveforms">

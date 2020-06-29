@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas.component';
+import { LFO } from '../../synthesizer.service';
 
 @Component({
   selector: 'app-waveform-canvas',
@@ -8,6 +9,7 @@ import { SynthesizerCanvasComponent } from '../synthesizer-canvas.component';
 })
 export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
 
+  @Input() lfo: LFO;
   @Input() frequency = 1;
   @Input() amplitude = 100;
   @Input() reverse = false;
@@ -20,12 +22,19 @@ export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
     let steps = this.width;
     if (this.type === 'triangle') {
       steps = 4 * this.frequency;
+    } else if (this.type === 'square') {
+      steps = this.frequency;
+    } else if (this.type === 'sawtooth') {
+      steps = this.frequency;
     }
-    let amplitude = (this.amplitude / 100 * this.height / 2);
+    const value = (this.amplitude / 100 * this.height / 2);
+    let amplitude = value;
     if (amplitude) {
-      amplitude--;
+      amplitude -= this.lineWidth;
     }
     ctx.lineWidth = this.lineWidth;
+
+
     ctx.strokeStyle = this.layout.colors.default.main;
     ctx.moveTo(0, this.height / 2);
     ctx.lineTo(this.width, this.height / 2);
@@ -34,21 +43,64 @@ export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
     ctx.moveTo(0, this.height / 2);
 
     const c = this.width / Math.PI / (this.frequency * 2);
-    for (let i = 0; i <= this.width; i += (this.width / steps)) {
-      if (this.type === 'square') {
+    const stepWidth = (this.width / steps);
+    for (let i = 0; i <= this.width; i += stepWidth) {
 
-      }
       let x = -amplitude * Math.sin(i / c);
 
       if (this.reverse) {
         x = amplitude * Math.sin(i / c);
       }
-      const y = this.height / 2 + x;
-      ctx.lineTo(i, y);
+      let y = this.height / 2 + x;
+
+      if (this.type === 'square') {
+        y = this.height / 2 - value;
+        if (this.reverse) {
+          y = this.height / 2 + value;
+        }
+        ctx.lineTo(i, y);
+        ctx.lineTo(i + stepWidth / 2, y);
+        y = this.height / 2 + value;
+        if (this.reverse) {
+          y = this.height / 2 - value;
+        }
+        ctx.lineTo(i + stepWidth / 2, y);
+        ctx.lineTo(i + stepWidth, y);
+      } else if (this.type === 'sawtooth') {
+        y = this.height / 2 - value;
+        if (this.reverse) {
+          y = this.height / 2 + value;
+        }
+        ctx.lineTo(i, y);
+        y = this.height / 2 + value;
+        if (this.reverse) {
+          y = this.height / 2 - value;
+        }
+        ctx.lineTo(i + stepWidth, y);
+      } else {
+        ctx.lineTo(i, y);
+      }
 
     }
     ctx.strokeStyle = this.layout.colors.default.light;
     ctx.stroke();
+    this.drawTimePosition();
+  }
+
+  onDrawTimePosition(percent: number) {
+    const size = 10;
+    const ctx = this.ctx;
+    const value = this.lfo.percentToValue(percent);
+    const x = this.width * percent / 100;
+    const y = this.height / 2 - (this.height / 2 * value / 100);
+    ctx.strokeStyle = this.layout.colors.default.secondary;
+    ctx.beginPath();
+    ctx.lineTo(0, y);
+    ctx.lineTo(this.width, y);
+    ctx.stroke();
+    ctx.fillStyle = this.layout.colors.default.light;
+    ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+    ctx.fill();
   }
 
 }

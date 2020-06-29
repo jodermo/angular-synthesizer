@@ -16,6 +16,9 @@
   >
     <canvas #canvas></canvas>
     <div class="knob-value">
+      <div class="knob-value-input" *ngIf="showSlider">
+        <input type="number" [(ngModel)]="value" min="{{min}}" max="{{max}}" step="{{step}}"/>
+      </div>
       <div class="knob-value-min">
         {{outputMin || min}}
       </div>
@@ -30,18 +33,19 @@
       </div>
     </div>
   </div>
-  <div *ngIf="type === 'knob' && synthesizer" class="knob-nodes" (mouseover)="showSlider = false">
+  <div *ngIf="type === 'knob' && osc && synthesizer" class="knob-nodes" (mouseover)="showSlider = false">
+
     <div *ngFor="let node of nodes; let i = index"
          class="knob-node knob-node-{{i+1}}"
-         [ngClass]="{hidden:(!node.targets.length && !synthesizer.connectNode), active:(node.targets.length)}"
+         [ngClass]="{hidden:(!node.source && !synthesizer.connectNode), active:(node.source)}"
     >
-      <div *ngIf="node.targets.length" class="inside" (dblclick)="clearNode(node)">
+      <div *ngIf="node.source" class="inside" (dblclick)="clearNode(node)">
         <div class="knob-node-source" *ngIf="node.source">
           <span class="source-type" *ngIf="node.source.type">{{node.source.type}}</span>
           <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>
         </div>
       </div>
-      <div *ngIf="!node.targets.length" class="inside" (click)="connectNode(node, synthesizer.connectNode, 'lfo')">
+      <div *ngIf="!node.source" class="inside" (click)="connectNodeSource(node, synthesizer.connectNode, sourceNode)">
         <div class="knob-node-source" *ngIf="node.source">
           <span class="source-type type-{{node.source.type}}" *ngIf="node.source.type">{{node.source.type}}</span>
           <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>

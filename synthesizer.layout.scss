@@ -185,7 +185,10 @@ app-synthesizer, .demo-app {
 
 
   mat-slider.mat-slider {
+
     .mat-slider-wrapper {
+      top: 1rem;
+
       .mat-slider-track-wrapper {
         .mat-slider-track-background {
           background: $color-background-secondary;

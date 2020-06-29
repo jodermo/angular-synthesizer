@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas.component';
-import { SequencerValue } from '../../synthesizer.service';
+import { Sequencer, SequencerValue } from '../../synthesizer.service';
 
 
 @Component({
@@ -12,6 +12,10 @@ export class SequencerCanvasComponent extends SynthesizerCanvasComponent {
   @Input() frequency = 1;
   @Input() values = [0, 0, 0, 0];
   @Input() reverse = false;
+
+  @Input() sequencer: Sequencer;
+
+  currentSequence = 0;
 
   sequence = {
     width: 0,
@@ -42,7 +46,8 @@ export class SequencerCanvasComponent extends SynthesizerCanvasComponent {
     const fourthElm = (int % 4) === 3;
     const mouseHover = (this.mouseOverSequence === int);
     const mouseDown = (mouseHover && this.mouseIsDown);
-    console.log(int, firstElm, fourthElm);
+    ctx.lineWidth = this.lineWidth;
+    this.drawTimePosition();
     // draw value
     if (firstElm) {
       ctx.fillStyle = this.layout.colors.default.light;
@@ -50,7 +55,7 @@ export class SequencerCanvasComponent extends SynthesizerCanvasComponent {
     } else {
       ctx.fillStyle = this.layout.colors.default.dark;
     }
-    ctx.fillRect(x, 0, this.sequence.width, this.sequence.height);
+    // ctx.fillRect(x, 0, this.sequence.width, this.sequence.height);
     ctx.fillStyle = this.layout.colors.default.main;
     if (mouseHover) {
       ctx.fillStyle = this.layout.colors.default.main;
@@ -58,23 +63,36 @@ export class SequencerCanvasComponent extends SynthesizerCanvasComponent {
     if (mouseDown) {
       ctx.fillStyle = this.layout.colors.default.secondary;
     }
+
+    if (this.currentSequence === int + 1) {
+      ctx.fillStyle = this.layout.colors.default.main;
+    }
     ctx.fillRect(x, this.sequence.height - valueY, this.sequence.width, valueY);
 
     // draw lines
 
     if (firstElm) {
-      ctx.strokeStyle = this.layout.colors.default.dark;
+      ctx.strokeStyle = this.layout.colors.default.secondary;
     } else {
+      ctx.strokeStyle = this.layout.colors.default.light;
       if (mouseHover) {
         ctx.strokeStyle = this.layout.colors.default.main;
       }
       if (mouseDown) {
         ctx.strokeStyle = this.layout.colors.default.secondary;
       }
+
+    }
+    if (this.currentSequence === int + 1) {
+      ctx.strokeStyle = this.layout.colors.default.main;
     }
     ctx.beginPath();
     ctx.rect(x, 0, this.sequence.width, this.sequence.height);
     ctx.stroke();
+  }
+
+  onDrawTimePosition(percent: number) {
+    this.currentSequence = Math.floor(percent / 100 * this.values.length) + 1;
   }
 
   onMouseDown(event) {

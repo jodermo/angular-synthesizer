@@ -1,5 +1,6 @@
 <app-synthesizer-control
   [synthesizer]="synthesizer"
+  [osc]="osc"
   [sourceNode]="effect"
   [title]="effect.nodeType"
   [min]="effect.min"
@@ -8,5 +9,4 @@
   [value]="effect.currentValue || 0"
   [default]="effect.default"
   (onChange)="effect.currentValue = $event; effect.value(effect.currentValue)"
-  (onConnectNode)="connectNode($event, effect)"
 ></app-synthesizer-control>

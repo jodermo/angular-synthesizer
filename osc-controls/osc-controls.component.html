@@ -1,10 +1,32 @@
 <div class="synthesizer-osc-controls" *ngIf="osc" [ngClass]="{active:(osc && osc.active)}">
-  <div class="synthesizer-osc-control">
-    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.attack"></app-osc-effect-control>
-    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.knee"></app-osc-effect-control>
-    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.ratio"></app-osc-effect-control>
-    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.release"></app-osc-effect-control>
-    <app-osc-effect-control [synthesizer]="osc.synthesizer" [effect]="osc.effects.delay"></app-osc-effect-control>
+
+  <div class="control-tab" *ngIf="osc.controlView === 'compressor'">
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.delay"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.attack"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.knee"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.ratio"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.release"></app-osc-effect-control>
+
+  </div>
+  <div class="control-tab" *ngIf="osc.controlView === 'filter'">
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.distortion"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.biquadFilter"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.convolver"></app-osc-effect-control>
+    <app-osc-effect-control class="synthesizer-osc-control" [synthesizer]="osc.synthesizer" [osc]="osc"
+                            [effect]="osc.effects.threshold"></app-osc-effect-control>
+
+  </div>
+  <div class="osc-control-navigation">
+    <button *ngFor="let view of osc.controlViews" (click)="osc.controlView = view"
+            [ngClass]="{active:(osc.controlView === view)}"
+    >{{view}}</button>
   </div>
 </div>
-

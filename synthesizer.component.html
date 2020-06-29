@@ -9,16 +9,7 @@
                [ngClass]="{selected:(currentOsc === osc)}"
           >
             <app-osc [osc]="osc"></app-osc>
-            <div>
-              <div class="osc-control-navigation">
-                <button *ngFor="let view of osc.controlViews" (click)="osc.controlView = view"
-                        [ngClass]="{active:(osc.controlView === view)}"
-                >{{view}}</button>
-              </div>
-              <app-osc-controls *ngIf="osc.controlView ===  'controls'" [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
-              <app-osc-filter *ngIf="osc.controlView ===  'filter'" [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-filter>
-            </div>
-
+            <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
           </div>
         </div>
       </div>
@@ -54,6 +45,8 @@
   <div class="synthesizer-options">
     <div class="synthesizer-settings">
       <div class="synthesizer-settings-values">
+
+
         <label class="synthesizer-settings-volume">
           Volume
           <mat-slider min="0" max="1" step=".01"
@@ -64,6 +57,22 @@
           Tempo
           <input type="number" [(ngModel)]="synthesizer.currentTempo" (change)="synthesizer.tempo()"/>
         </label>
+        <label>
+          <div class="checkbox" [ngClass]="{active:(!synthesizer.restartOnTrigger)}"
+               (click)="synthesizer.setRestart(!synthesizer.restartOnTrigger)"></div>
+          <span>Continuous</span>
+        </label>
+        <div *ngIf="!synthesizer.restartOnTrigger" class="synthesizer-player">
+          <button *ngIf="synthesizer.paused" (click)="synthesizer.play();">play</button>
+          <button *ngIf="!synthesizer.paused" (click)="synthesizer.pause();">pause</button>
+          <button *ngIf="!synthesizer.restartOnTrigger" (click)="synthesizer.restart()">restart</button>
+          <label *ngIf="!synthesizer.restartOnTrigger">
+            <div class="checkbox" [ngClass]="{active:(synthesizer.metronome)}"
+                 (click)="synthesizer.metronome = !synthesizer.metronome"></div>
+            <span>Metronome</span>
+          </label>
+        </div>
+        <app-synthesizer-display [synthesizer]="synthesizer"></app-synthesizer-display>
       </div>
       <div class="synthesizer-option-buttons">
         <button class="synthesizer-settings-reset" (click)="synthesizer.reset()">↺</button>
