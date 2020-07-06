@@ -1,5 +1,6 @@
 import { Component, ElementRef, AfterViewInit, ViewChild, OnChanges, SimpleChanges, Output, Input, OnDestroy } from '@angular/core';
-import { Synthesizer, SynthesizerLayout } from '../synthesizer.service';
+import { SynthesizerLayout } from '../synthesizer.layout';
+import { Synthesizer } from '../classes/synthesizer';
 
 @Component({
   selector: 'app-synthesizer-canvas',
@@ -140,42 +141,34 @@ export class SynthesizerCanvasComponent implements AfterViewInit, OnChanges, OnD
 
   }
 
-  @Output()
+
   onDrawTimePosition(percent: number) {
     // stuff when time position changes
   }
 
-  @Output()
   onInit() {
     // stuff when after view init
   }
 
-  @Output()
   onChanges() {
     // stuff when detect changes
   }
 
-  @Output()
   onMouseOver(event) {
   }
 
-  @Output()
   onMouseOut(event) {
   }
 
-  @Output()
   onMouseDown(event) {
   }
 
-  @Output()
   onMouseUp(event) {
   }
 
-  @Output()
   onMouseMove(event) {
   }
 
-  @Output()
   onDrawCanvas(ctx = this.ctx) {
   }
 

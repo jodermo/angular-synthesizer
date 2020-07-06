@@ -1,7 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas.component';
-import { Sequencer, SequencerValue } from '../../synthesizer.service';
+import { SynthesizerSequencer } from '../../classes/synthesizer-sequencer';
 
+class SequencerValue {
+  int: number;
+  value: any;
+}
 
 @Component({
   selector: 'app-sequencer-canvas',
@@ -13,7 +17,7 @@ export class SequencerCanvasComponent extends SynthesizerCanvasComponent {
   @Input() values = [0, 0, 0, 0];
   @Input() reverse = false;
 
-  @Input() sequencer: Sequencer;
+  @Input() sequencer: SynthesizerSequencer;
 
   currentSequence = 0;
 

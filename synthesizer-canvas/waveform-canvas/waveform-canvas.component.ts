@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas.component';
-import { LFO } from '../../synthesizer.service';
+import { SynthesizerLfo } from '../../classes/synthesizer-lfo';
 
 @Component({
   selector: 'app-waveform-canvas',
@@ -9,7 +9,7 @@ import { LFO } from '../../synthesizer.service';
 })
 export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
 
-  @Input() lfo: LFO;
+  @Input() lfo: SynthesizerLfo;
   @Input() frequency = 1;
   @Input() amplitude = 100;
   @Input() reverse = false;
@@ -65,7 +65,9 @@ export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
           y = this.height / 2 - value;
         }
         ctx.lineTo(i + stepWidth / 2, y);
-        ctx.lineTo(i + stepWidth, y);
+        //  ctx.lineTo(i + stepWidth, y);
+        ctx.lineTo(i + stepWidth / 1.5, 0);
+        ctx.stroke();
       } else if (this.type === 'sawtooth') {
         y = this.height / 2 - value;
         if (this.reverse) {
@@ -80,7 +82,6 @@ export class WaveformCanvasComponent extends SynthesizerCanvasComponent {
       } else {
         ctx.lineTo(i, y);
       }
-
     }
     ctx.strokeStyle = this.layout.colors.default.light;
     ctx.stroke();

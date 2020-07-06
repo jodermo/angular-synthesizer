@@ -1,5 +1,5 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
-import { OSC } from '../synthesizer.service';
+import { AfterViewInit, Component, Input } from '@angular/core';
+import { SynthesizerOsc } from '../classes/synthesizer-osc';
 
 @Component({
   selector: 'app-osc',
@@ -7,7 +7,7 @@ import { OSC } from '../synthesizer.service';
   styleUrls: ['./osc.component.scss']
 })
 export class OscComponent implements AfterViewInit {
-  @Input() osc: OSC;
+  @Input() osc: SynthesizerOsc;
 
   ready = false;
   currentTab;

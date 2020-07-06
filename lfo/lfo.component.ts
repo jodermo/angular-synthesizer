@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LFO } from '../synthesizer.service';
+import { SynthesizerLfo } from '../classes/synthesizer-lfo';
 
 @Component({
   selector: 'app-lfo',
@@ -7,7 +7,7 @@ import { LFO } from '../synthesizer.service';
   styleUrls: ['./lfo.component.scss']
 })
 export class LfoComponent implements OnInit {
-  @Input() lfo: LFO;
+  @Input() lfo: SynthesizerLfo;
   @Input() amplitude = 100;
   @Input() rate = 1;
 

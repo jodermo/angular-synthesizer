@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Synthesizer } from '../synthesizer.service';
+import { Synthesizer } from '../classes/synthesizer';
+
 
 @Component({
   selector: 'app-synthesizer-settings',

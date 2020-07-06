@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LFO, Sequencer, SequencerValue } from '../synthesizer.service';
+import { SynthesizerSequencer } from '../classes/synthesizer-sequencer';
 
 @Component({
   selector: 'app-sequencer',
@@ -7,7 +7,7 @@ import { LFO, Sequencer, SequencerValue } from '../synthesizer.service';
   styleUrls: ['./sequencer.component.scss']
 })
 export class SequencerComponent implements OnInit {
-  @Input() sequencer: Sequencer;
+  @Input() sequencer: SynthesizerSequencer;
 
   showOptions = false;
 

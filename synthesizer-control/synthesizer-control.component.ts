@@ -4,8 +4,12 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { AudioEffectNode, OSC, Synthesizer, SynthesizerNode } from '../synthesizer.service';
 import { SynthesizerCanvasComponent } from '../synthesizer-canvas/synthesizer-canvas.component';
+import { SynthesizerOsc } from '../classes/synthesizer-osc';
+import { Synthesizer } from '../classes/synthesizer';
+import { SynthesizerNode } from '../classes/synthesizer-node';
+import { AudioEffect } from '../classes/audio-effect';
+import { SynthesizerLayout } from '../synthesizer.layout';
 
 @Component({
   selector: 'app-synthesizer-control',
@@ -14,8 +18,8 @@ import { SynthesizerCanvasComponent } from '../synthesizer-canvas/synthesizer-ca
 })
 export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   @Input() synthesizer: Synthesizer;
-  @Input() osc: OSC;
-  @Input() sourceNode: AudioEffectNode;
+  @Input() osc: SynthesizerOsc;
+  @Input() sourceNode: AudioEffect;
   @Input() title;
   @Input() type = 'knob';
   @Input() min = 0;
@@ -40,12 +44,14 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent {
   // tslint:disable-next-line:no-output-on-prefix
   @Output() onConnectNode = new EventEmitter<SynthesizerNode>();
 
+  layout: SynthesizerLayout = new SynthesizerLayout();
+
   middleValue;
   nodes: SynthesizerNode[] = [];
-  knobColor = '#00725f';
-  knobLegendColor = '#353535';
-  knobValueColor = '#00ffd9';
-  knobTextColor = '#fff';
+  knobColor = this.layout.colors.default.main;
+  knobLegendColor = this.layout.colors.default.dark;
+  knobValueColor = this.layout.colors.default.light;
+  knobTextColor = this.layout.colors.default.light;
   knobLegendSize = 5;
   font = 'bold 1rem Arial';
 

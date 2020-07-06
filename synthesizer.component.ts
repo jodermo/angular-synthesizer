@@ -1,5 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { LFO, OSC, Sequencer, Synthesizer, SynthesizerService } from './synthesizer.service';
+import { SynthesizerLfo } from './classes/synthesizer-lfo';
+import { SynthesizerOsc } from './classes/synthesizer-osc';
+import { Synthesizer } from './classes/synthesizer';
+import { SynthesizerService } from './synthesizer.service';
+import { SynthesizerSequencer } from './classes/synthesizer-sequencer';
 
 
 @Component({
@@ -12,12 +16,12 @@ export class SynthesizerComponent implements OnInit {
   views = ['osc', 'lfo'];
   currentView = this.views[0];
   synthesizer: Synthesizer;
-  currentOsc: OSC;
-  currentLfo: LFO;
-  currentSequencer: Sequencer;
+  currentOsc: SynthesizerOsc;
+  currentLfo: SynthesizerLfo;
+  currentSequencer: SynthesizerSequencer;
   currentOscNumber;
   octaves = 4;
-  connectLfo: LFO;
+  connectLfo: SynthesizerLfo;
   showSettings = false;
   nodesTabs = ['LFO', 'Sequencer'];
   nodesTab = this.nodesTabs[0];
@@ -38,7 +42,7 @@ export class SynthesizerComponent implements OnInit {
     this.currentView = viewName;
   }
 
-  selectOsc(osc: OSC) {
+  selectOsc(osc: SynthesizerOsc) {
     if (this.synthesizer.oscs) {
       for (let i = 0; i < this.synthesizer.oscs.length; i++) {
         if (this.synthesizer.oscs[i] === osc) {
@@ -50,11 +54,11 @@ export class SynthesizerComponent implements OnInit {
   }
 
 
-  selectLfo(lfo: LFO) {
+  selectLfo(lfo: SynthesizerLfo) {
     this.currentLfo = lfo;
   }
 
-  selectSequencer(sequencer: Sequencer) {
+  selectSequencer(sequencer: SynthesizerSequencer) {
     this.currentSequencer = sequencer;
   }
 

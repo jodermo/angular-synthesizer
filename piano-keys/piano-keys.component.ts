@@ -7,7 +7,7 @@ import {
   SimpleChanges,
   ChangeDetectorRef
 } from '@angular/core';
-import { Synthesizer } from '../synthesizer.service';
+import { Synthesizer } from '../classes/synthesizer';
 
 @Component({
   selector: 'app-piano-keys',

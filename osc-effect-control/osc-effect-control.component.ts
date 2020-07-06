@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { OscComponent } from '../osc/osc.component';
-import { AudioEffectNode, Synthesizer } from '../synthesizer.service';
+import { Synthesizer } from '../classes/synthesizer';
+import { AudioEffect } from '../classes/audio-effect';
 
 @Component({
   selector: 'app-osc-effect-control',
@@ -8,7 +9,7 @@ import { AudioEffectNode, Synthesizer } from '../synthesizer.service';
   styleUrls: ['./osc-effect-control.component.css']
 })
 export class OscEffectControlComponent extends OscComponent {
-  @Input() effect: AudioEffectNode;
+  @Input() effect: AudioEffect;
   @Input() synthesizer: Synthesizer;
 
   // tslint:disable-next-line:use-lifecycle-interface
