@@ -1,0 +1,9 @@
+<div class="synthesizer-display" *ngIf="synthesizer">
+  <div class="synthesizer-beat-quarter">{{synthesizer.currentBeat['4']}}/4</div>
+  <div class="synthesizer-beat">{{synthesizer.totalBeat['1']}} beats</div>
+  <div class="synthesizer-time">{{round(synthesizer.currentTime / 1000)}} sec.</div>
+  <div class="synthesizer-beat-line" *ngIf="synthesizer.currentBeat">
+    <div class="synthesizer-beat-line-tick" *ngFor="let i of [].constructor(4)"></div>
+    <div class="synthesizer-beat-line-fill" [ngStyle]="{width:( synthesizer.currentBeat['%'] + '%')}"></div>
+  </div>
+</div>

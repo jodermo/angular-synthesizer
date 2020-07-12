@@ -1,0 +1,94 @@
+@import "../../synthesizer.layout";
+
+.synthesizer-osc {
+  position: relative;
+  color: $color-text-secondary;
+  opacity: .5;
+  padding: $padding-small;
+
+
+  .synthesizer-osc-header {
+    position: absolute;
+    cursor: pointer;
+    padding: $padding-small;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+
+
+    .checkbox {
+      position: relative;
+      margin-top: $padding-medium;
+      z-index: 3;
+    }
+
+    h3 {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      z-index: 3;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-weight: bold;
+    }
+
+  }
+
+  .synthesizer-osc-waveform {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+
+  }
+
+
+  .synthesizer-osc-options {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: $padding-small;
+
+    app-waveform-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .synthesizer-osc-waveforms {
+    position: relative;
+    display: flex;
+    z-index: 2;
+
+    .synthesizer-osc-waveforms-item {
+      flex: 1;
+    }
+  }
+
+  .synthesizer-osc-control-view-navigation {
+    position: relative;
+    display: flex;
+    z-index: 2;
+    margin-top: $padding-small;
+
+    .synthesizer-osc-control-view-navigation-item {
+      flex: 1;
+    }
+  }
+
+  &:hover {
+    color: $color-hover-text-main;
+  }
+
+  &.active {
+    opacity: 1;
+    color: $color-active-text-main;
+  }
+
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

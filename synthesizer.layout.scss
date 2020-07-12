@@ -21,17 +21,17 @@ $border-secondary: 1px solid $color-active-background-secondary;
 $padding-small: .5rem;
 $padding-medium: .75rem;
 $padding-large: 1.25rem;
-
-$font-family: 'Arial';
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@600&display=swap');
+$font-family: 'Source Code Pro', monospace;
 
 $font-size-small: .7rem;
 $line-height-small: .9rem;
-$font-size-medium: 1rem;
+$font-size-medium: .9rem;
 $line-height-medium: 1.2rem;
 $font-size-large: 2rem;
 $line-height-large: 2.2rem;
 
-$knob-size: 4rem;
+$knob-size: 3.4rem;
 $knob-gap: $padding-medium;
 
 $knob-value-gap: $padding-large;
@@ -68,7 +68,7 @@ $color-key-black-border-left: #333;
 
 $key-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.75);
 
-$keyboard-min-height: 12vh;
+$keyboard-min-height: 18vh;
 
 app-synthesizer, .demo-app {
 
@@ -90,6 +90,12 @@ app-synthesizer, .demo-app {
     border: none;
     cursor: pointer;
     padding: $padding-small $padding-medium;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: $font-size-medium;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 
     &:hover {
       background: $color-hover-background-secondary;
@@ -116,6 +122,16 @@ app-synthesizer, .demo-app {
     border-radius: $checkbox-border-width;
     flex: 0 $checkbox-size;
     z-index: 2;
+
+    .checkbox-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: $font-size-large - $padding-medium;
+      line-height: 0;
+      mix-blend-mode: lighten;
+    }
 
     &:before {
       content: '';

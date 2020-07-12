@@ -1,0 +1,63 @@
+@import "../../synthesizer.layout";
+
+.synthesizer-display {
+  position: relative;
+  width: 100%;
+  display: flex;
+  padding-top: $padding-large;
+  padding-bottom: $padding-medium;
+
+  & > * {
+    flex: 1;
+    text-align: center;
+    margin-right: $padding-medium;
+  }
+
+  .synthesizer-time {
+
+  }
+
+  .synthesizer-beat {
+
+  }
+
+  .synthesizer-beat-preview {
+    width: 100%;
+    display: flex;
+
+    span {
+      flex: 1;
+      text-align: center;
+    }
+
+  }
+
+  .synthesizer-beat-line {
+    position: absolute;
+    width: 100%;
+    height: $padding-medium;
+    top: 0;
+    display: flex;
+
+    .synthesizer-beat-line-tick {
+      position: relative;
+      flex: 1;
+      border-top: 1px solid $color-active-text-main;
+      border-bottom: 1px solid $color-active-text-main;
+      border-right: 1px solid $color-active-text-main;
+      z-index: 2;
+
+      &:first-child {
+        border-left: 1px solid $color-active-text-main;
+      }
+    }
+
+    .synthesizer-beat-line-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: $color-active-background-secondary;
+    }
+  }
+}

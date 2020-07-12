@@ -1,0 +1,48 @@
+<div class="synthesizer-osc" [ngClass]="{active:(osc.active)}">
+  <div class="synthesizer-osc-header">
+    <div class="checkbox" [ngClass]="{active:(osc.active)}" (click)="osc.toggleActive()"></div>
+    <h3 (click)="osc.toggleActive()">OSC <span *ngIf="osc.id">{{osc.id}}</span></h3>
+  </div>
+  <div class="synthesizer-osc-options" *ngIf="osc.ready && osc.audioGain">
+    <app-waveform-canvas *ngIf="osc.currentWaveform" [type]="osc.currentWaveform"
+                         [lineWidth]="5"
+                         [amplitude]="osc.audioGain.gainNode.gain.value * 100">
+    </app-waveform-canvas>
+    <app-gain
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [gain]="osc.audioGain"
+      [ngClass]="{hidden:(!osc.active && !synthesizer.connectNode)}"
+    ></app-gain>
+    <app-pan
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [pan]="osc.audioPan"
+      [ngClass]="{hidden:(!osc.active && !synthesizer.connectNode)}"
+    ></app-pan>
+  </div>
+  <div class="synthesizer-osc-waveforms"  [ngClass]="{hidden:(!osc.active)}">
+    <button class="synthesizer-osc-waveforms-item" *ngFor="let waveform of osc.waveforms"
+            [ngClass]="{active:(waveform === osc.currentWaveform)}"
+            (click)="osc.waveform(waveform)"
+    >
+      {{waveform}}
+    </button>
+  </div>
+  <div class="synthesizer-osc-control-view-navigation"  [ngClass]="{hidden:(!osc.active && !synthesizer.connectNode)}">
+    <button class="synthesizer-osc-control-view-navigation-item" *ngFor="let view of osc.controlViews"
+            [ngClass]="{active:(view === osc.controlView)}"
+            (click)="osc.controlView = view"
+    >
+      {{view}}
+    </button>
+  </div>
+  <div class="synthesizer-osc-control-views"  [ngClass]="{hidden:(!osc.active && !synthesizer.connectNode)}">
+    <app-compressor *ngIf="osc.controlView === 'compressor'" [synthesizer]="synthesizer" [osc]="osc"
+                    [compressor]="osc.audioCompressor"></app-compressor>
+    <app-equalizer *ngIf="osc.controlView === 'equalizer'" [synthesizer]="synthesizer" [osc]="osc"
+                   [equalizer]="osc.audioEqualizer"></app-equalizer>
+  </div>
+
+</div>
+

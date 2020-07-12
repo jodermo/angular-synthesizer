@@ -1,0 +1,21 @@
+@import "../../synthesizer.layout";
+
+.compressor-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .controls-set {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    b {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}

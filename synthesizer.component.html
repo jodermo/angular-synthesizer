@@ -8,8 +8,7 @@
                (click)="selectOsc(osc)"
                [ngClass]="{selected:(currentOsc === osc)}"
           >
-            <app-osc [osc]="osc"></app-osc>
-            <app-osc-controls [osc]="osc" (onConnectNode)="currentView = 'osc'"></app-osc-controls>
+            <app-osc [synthesizer]="synthesizer" [osc]="osc"></app-osc>
           </div>
         </div>
       </div>
@@ -42,51 +41,68 @@
       </div>
     </div>
   </div>
+  <app-synthesizer-display *ngIf="showDisplay" [synthesizer]="synthesizer"></app-synthesizer-display>
   <div class="synthesizer-options">
     <div class="synthesizer-settings">
       <div class="synthesizer-settings-values">
-
-
+        <label>
+          <span>Tempo</span>
+          <input type="number" [(ngModel)]="synthesizer.currentTempo" (change)="synthesizer.tempo()"/>
+        </label>
         <label class="synthesizer-settings-volume">
-          Volume
+          <span>Volume</span>
           <mat-slider min="0" max="1" step=".01"
                       [(ngModel)]="synthesizer.volume"></mat-slider>
 
         </label>
         <label>
-          Tempo
-          <input type="number" [(ngModel)]="synthesizer.currentTempo" (change)="synthesizer.tempo()"/>
-        </label>
-        <label>
           <div class="checkbox" [ngClass]="{active:(!synthesizer.restartOnTrigger)}"
-               (click)="synthesizer.setRestart(!synthesizer.restartOnTrigger)"></div>
-          <span>Continuous</span>
+               (click)="synthesizer.setRestart(!synthesizer.restartOnTrigger)">
+            <div class="checkbox-icon" *ngIf="synthesizer.restartOnTrigger">⇒</div>
+            <div class="checkbox-icon" *ngIf="!synthesizer.restartOnTrigger">⟲</div>
+          </div>
+
         </label>
         <div *ngIf="!synthesizer.restartOnTrigger" class="synthesizer-player">
-          <button *ngIf="synthesizer.paused" (click)="synthesizer.play();">play</button>
-          <button *ngIf="!synthesizer.paused" (click)="synthesizer.pause();">pause</button>
-          <button *ngIf="!synthesizer.restartOnTrigger" (click)="synthesizer.restart()">restart</button>
+          <button *ngIf="synthesizer.paused" (click)="synthesizer.play();">▶</button>
+          <button *ngIf="!synthesizer.paused" (click)="synthesizer.pause();">⯀</button>
+          <button *ngIf="!synthesizer.restartOnTrigger" (click)="synthesizer.restart()">↫</button>
           <label *ngIf="!synthesizer.restartOnTrigger">
             <div class="checkbox" [ngClass]="{active:(synthesizer.metronome)}"
-                 (click)="synthesizer.metronome = !synthesizer.metronome"></div>
-            <span>Metronome</span>
+                 (click)="synthesizer.metronome = !synthesizer.metronome">
+              <div class="checkbox-icon">M</div>
+            </div>
           </label>
         </div>
-        <app-synthesizer-display [synthesizer]="synthesizer"></app-synthesizer-display>
       </div>
-      <div class="synthesizer-option-buttons">
-        <button class="synthesizer-settings-reset" (click)="synthesizer.reset()">↺</button>
-        <button class="synthesizer-settings-save" (click)="synthesizer.save()">💾</button>
-        <button class="synthesizer-settings-save" (click)="showSettings = !showSettings"
-                [ngClass]="{active:(showSettings)}">
-          <span *ngIf="!showSettings">...</span>
-          <span *ngIf="showSettings">▼</span>
+      <div class="synthesizer-menu-buttons">
+        <button class="synthesizer-settings-save" (click)="showDisplay = !showDisplay"
+                [ngClass]="{active:(showDisplay)}">
+          <span *ngIf="!showDisplay">ⓘ ⯅</span>
+          <span *ngIf="showDisplay">ⓘ ▼ </span>
+        </button>
+        <button class="synthesizer-settings-save" (click)="showKeyboard = !showKeyboard"
+                [ngClass]="{active:(showKeyboard)}">
+          <span *ngIf="!showKeyboard"> 🎹 ⯅</span>
+          <span *ngIf="showKeyboard">🎹 ▼ </span>
+        </button>
+        <button
+          *ngIf="synthesizer.midi && (synthesizer.midi.inputControllers.length || synthesizer.midi.outputControllers.length)"
+          class="synthesizer-settings-save" (click)="showMidiControls = !showMidiControls"
+          [ngClass]="{active:(showMidiControls)}">
+          <span>MIDI</span>
+          <span *ngIf="!showMidiControls"> ⯅</span>
+          <span *ngIf="showMidiControls"> ▼</span>
         </button>
       </div>
+      <div class="synthesizer-option-buttons">
+        <button class="synthesizer-settings-reset" (click)="synthesizer.reset()">♺</button>
+        <button class="synthesizer-settings-save" (click)="synthesizer.save()">💾</button>
+      </div>
     </div>
-    <app-synthesizer-settings *ngIf="showSettings" [synthesizer]="synthesizer"></app-synthesizer-settings>
+    <app-midi-controls *ngIf="showMidiControls" [synthesizer]="synthesizer"></app-midi-controls>
   </div>
-  <div class="synthesizer-keyboard">
+  <div class="synthesizer-keyboard" *ngIf="showKeyboard">
     <app-piano-keys [synthesizer]="synthesizer" [currentNote]="synthesizer.currentNote"
                     [currentOctave]="synthesizer.currentOctave"
                     [octaves]="octaves" (onKeyDown)="pianoKeyDown($event)" (onKeyUp)="pianoKeyUp($event)"

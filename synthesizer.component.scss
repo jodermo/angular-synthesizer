@@ -119,8 +119,39 @@
       display: flex;
       width: 100%;
 
+      button {
+        text-overflow: clip;
+        font-size: $font-size-large;
+        background: none;
+        margin: $padding-medium 0;
+
+        &:hover {
+          opacity: .9;
+        }
+      }
+
+      label {
+        margin-left: $padding-small;
+      }
+
+      input, mat-slider {
+        padding: $padding-small;
+        width: 100%;
+
+      }
+
+
+      .checkbox {
+        margin-top: $padding-large;
+      }
+
       .synthesizer-player {
         display: flex;
+
+        button {
+          min-width: $knob-size;
+        }
+
       }
 
       .synthesizer-time {
@@ -132,6 +163,13 @@
         display: flex;
         width: 100%;
         flex: 1;
+
+        label {
+          span {
+            display: inline-block;
+            width: 100%;
+          }
+        }
       }
 
       .synthesizer-option-buttons {

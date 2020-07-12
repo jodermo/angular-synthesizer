@@ -1,0 +1,19 @@
+@import "../../synthesizer.layout";
+
+.midi-controls {
+  display: flex;
+
+
+  .midi-controls-inputs, .midi-controls-outputs {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+
+    .midi-controller {
+      flex: 1;
+      cursor: pointer;
+    }
+  }
+}

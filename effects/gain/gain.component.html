@@ -1,0 +1,11 @@
+<app-synthesizer-control
+  [synthesizer]="synthesizer"
+  [osc]="osc"
+  [sourceNode]="gain.gainNode"
+  [title]="'Vol.'"
+  [min]="0"
+  [max]="1"
+  [step]=".01"
+  [value]="gain.gainNode.gain.value"
+  (onChange)="gain.setValue($event,'gain', 'valueAtTime' )"
+></app-synthesizer-control>

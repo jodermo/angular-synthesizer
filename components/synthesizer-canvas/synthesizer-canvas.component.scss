@@ -1,0 +1,13 @@
+@import "../../synthesizer.layout";
+
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 $padding-small/4 $color-transparent-dark);
+  box-shadow: 0 0 $padding-small 0 $color-transparent-dark inset;
+  border: $padding-small solid $color-background-secondary;
+}
+
+

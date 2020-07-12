@@ -1,0 +1,15 @@
+<div class="compressor-controls">
+  <app-synthesizer-control *ngFor="let effect of compressor.effectNodes"
+                           [synthesizer]="synthesizer"
+                           [osc]="osc"
+                           [sourceNode]="effect"
+                           [title]="effect.param"
+                           [min]="effect.min"
+                           [max]="effect.max"
+                           [step]="effect.step"
+                           [value]="compressor.getNode('compressor', effect.param).value()"
+                           (onChange)="compressor.setValue($event,'compressor', effect.param)"
+
+  ></app-synthesizer-control>
+
+</div>

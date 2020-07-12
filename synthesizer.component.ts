@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { SynthesizerLfo } from './classes/synthesizer-lfo';
-import { SynthesizerOsc } from './classes/synthesizer-osc';
-import { Synthesizer } from './classes/synthesizer';
+import { SynthesizerLfo } from './classes/synthesizer/synthesizer-modulator/synthesizer-modulators/synthesizer-lfo';
+import { SynthesizerSequencer } from './classes/synthesizer/synthesizer-modulator/synthesizer-modulators/synthesizer-sequencer';
 import { SynthesizerService } from './synthesizer.service';
-import { SynthesizerSequencer } from './classes/synthesizer-sequencer';
+import { Synthesizer } from './classes/synthesizer/synthesizer';
+import { SynthesizerOsc } from './classes/synthesizer/synthesizer-osc/synthesizer-osc';
 
 
 @Component({
@@ -22,10 +22,12 @@ export class SynthesizerComponent implements OnInit {
   currentOscNumber;
   octaves = 4;
   connectLfo: SynthesizerLfo;
-  showSettings = false;
   nodesTabs = ['LFO', 'Sequencer'];
   nodesTab = this.nodesTabs[0];
 
+  showDisplay = true;
+  showKeyboard = true;
+  showMidiControls = false;
 
   constructor(public audioEditor: SynthesizerService, private cdRef: ChangeDetectorRef) {
     this.synthesizer = new Synthesizer(3, 1, 1, cdRef);
@@ -36,6 +38,9 @@ export class SynthesizerComponent implements OnInit {
 
 
   ngOnInit(): void {
+    if (this.synthesizer && this.synthesizer.manager) {
+      this.synthesizer.manager.getLocalStorage(this.synthesizer);
+    }
   }
 
   showView(viewName) {

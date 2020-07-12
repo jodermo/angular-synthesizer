@@ -1,0 +1,71 @@
+@import "../../synthesizer.layout";
+
+.synthesizer-lfo {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: .5;
+  height: 100%;
+  min-width: 100px;
+
+  .synthesizer-lfo-header {
+    display: flex;
+    cursor: pointer;
+    background: $color-background-secondary;
+
+    .checkbox {
+      margin: 2px $padding-small 2px 2px;
+    }
+
+    h3 {
+      flex: 1;
+      line-height: $checkbox-size;
+      margin: 0;
+      padding: 0;
+      font-size: $font-size-small;
+
+    }
+
+    .synthesizer-lfo-connect {
+
+    }
+  }
+
+  .synthesizer-lfo-waveform {
+    position: relative;
+    flex: 1;
+    display: flex;
+    padding: $padding-small 0;
+    app-waveform-canvas{
+      position: relative;
+      width: 100%;
+    }
+  }
+
+  .synthesizer-lfo-options {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .synthesizer-lfo-waveforms {
+    display: flex;
+
+    button {
+      flex: 1;
+    }
+
+  }
+
+  &:hover {
+    color: $color-hover-text-main;
+  }
+
+  &.active {
+    opacity: 1;
+    color: $color-active-background-main;
+  }
+}

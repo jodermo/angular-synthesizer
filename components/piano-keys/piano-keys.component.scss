@@ -1,0 +1,141 @@
+@import "../../synthesizer.layout";
+
+.piano-keys {
+  position: relative;
+  width: 100%;
+  min-height: $keyboard-min-height;
+  display: flex;
+  flex-direction: row;
+
+
+  .piano-keys-controls {
+    display: flex;
+    flex-direction: column;
+
+    .piano-keys-latch {
+      background: $color-background-secondary;
+      color: $color-text-secondary;
+      font-weight: bold;
+      padding: $padding-medium;
+      cursor: pointer;
+
+      &.active {
+        background: $color-active-background-secondary;
+        color: $color-active-text-secondary;
+      }
+
+    }
+
+    .piano-keys-pitch {
+      position: relative;
+      flex: 1;
+      cursor: pointer;
+      box-shadow: $node-shadow;
+
+      .pitch-knob {
+        position: absolute;
+        width: 100%;
+        height: 1rem;
+        background: $color-active-background-secondary;
+        pointer-events: none;
+
+      }
+
+    }
+  }
+
+  .piano-keys-keyboard {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+
+    .piano-keys-octave {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+
+      .piano-keys-key {
+        flex: 1;
+        background: $color-key-white;
+        color: $color-key-white-caption;
+        cursor: pointer;
+        text-align: center;
+        border: 2px solid $color-key-white-border-top;
+        border-right-color: $color-key-white-border-right;
+        border-bottom-color: $color-key-white-border-bottom;
+        border-left-color: $color-key-white-border-left;
+
+        & > .inside {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          .piano-keys-key-caption {
+            position: absolute;
+            width: 100%;
+            bottom: .5rem;
+            pointer-events: none;
+            font-size: $font-size-small;
+          }
+        }
+
+        &:hover {
+          background: $color-key-white-hover;
+        }
+
+        &.pressed {
+          background: $color-key-white-pressed;
+        }
+
+        &.active {
+          background: $color-active-background-main;
+        }
+
+        &.black-key {
+          padding: 0 0;
+          width: 0;
+          max-width: 0;
+          flex: 0;
+          border: none;
+
+          & > .inside {
+            content: '';
+            position: absolute;
+            height: 60%;
+            width: 10%;
+            top: 0;
+            transform: translateX(-50%);
+            background: $color-key-black;
+            color: $color-key-black-caption;
+            border: 2px solid $color-key-black-border-top;
+            border-right-color: $color-key-black-border-right;
+            border-bottom-color: $color-key-black-border-bottom;
+            border-left-color: $color-key-black-border-left;
+            pointer-events: all;
+            z-index: 2;
+
+          }
+
+          &.pressed {
+            & > .inside {
+              background: $color-key-black-pressed;
+            }
+          }
+
+          &:hover {
+            & > .inside {
+              background: $color-key-black-hover;
+            }
+          }
+
+          &.active {
+            & > .inside {
+              background: $color-active-background-secondary;
+            }
+          }
+        }
+      }
+    }
+  }
+}

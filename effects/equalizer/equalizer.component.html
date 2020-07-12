@@ -1,0 +1,102 @@
+<div class="equalizer-controls">
+  <div class="controls-set">
+    <b>HF</b>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.highShelfNode"
+      [title]="'kHz'"
+      [min]="4700"
+      [max]="22000"
+      [step]="100"
+      [value]="equalizer.highShelfNode.frequency.value"
+      (onChange)="equalizer.setValue($event,'highShelf', 'frequency')"
+    ></app-synthesizer-control>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.highShelfNode"
+      [title]="'dB'"
+      [min]="-50"
+      [max]="50"
+      [step]="1"
+      [value]="equalizer.highShelfNode.gain.value"
+      (onChange)="equalizer.setValue($event,'highShelf', 'gain')"
+    ></app-synthesizer-control>
+  </div>
+  <div class="controls-set">
+    <b>LF</b>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.lowShelfNode"
+      [title]="'kHz'"
+      [min]="35"
+      [max]="220"
+      [step]="1"
+      [value]="equalizer.lowShelfNode.frequency.value"
+      (onChange)="equalizer.setValue($event,'lowShelf', 'frequency' )"
+    ></app-synthesizer-control>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.lowShelfNode"
+      [title]="'db'"
+      [min]="-50"
+      [max]="50"
+      [step]="1"
+      [value]="equalizer.lowShelfNode.gain.value"
+      (onChange)="equalizer.setValue($event,'lowShelf', 'gain')"
+    ></app-synthesizer-control>
+  </div>
+  <div class="controls-set">
+    <b>HMF</b>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.highPassNode"
+      [title]="'kHz'"
+      [min]="800"
+      [max]="5900"
+      [step]="100"
+      [value]="equalizer.highPassNode.frequency.value"
+      (onChange)="equalizer.setValue($event,'highPass', 'frequency' )"
+    ></app-synthesizer-control>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.highPassNode"
+      [title]="'Q'"
+      [min]="0.7"
+      [max]="12"
+      [step]="0.1"
+      [value]="equalizer.highPassNode.gain.value"
+      (onChange)="equalizer.setValue($event,'highPass', 'Q')"
+    ></app-synthesizer-control>
+  </div>
+  <div class="controls-set">
+    <b>LMF</b>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.lowPassNode"
+      [title]="'kHz'"
+      [min]="60"
+      [max]="1600"
+      [step]="10"
+      [value]="equalizer.lowPassNode.frequency.value"
+      (onChange)="equalizer.setValue($event,'lowPass', 'frequency')"
+    ></app-synthesizer-control>
+    <app-synthesizer-control
+      [synthesizer]="synthesizer"
+      [osc]="osc"
+      [sourceNode]="equalizer.lowPassNode"
+      [title]="'Q'"
+      [min]="0.7"
+      [max]="12"
+      [step]="0.1"
+      [value]="equalizer.lowPassNode.gain.value"
+      (onChange)="equalizer.setValue($event,'lowPass', 'Q' )"
+    ></app-synthesizer-control>
+  </div>
+</div>

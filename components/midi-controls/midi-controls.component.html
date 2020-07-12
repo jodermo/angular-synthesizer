@@ -1,0 +1,27 @@
+<div *ngIf="synthesizer && synthesizer.midi && synthesizer.midi.outputControllers.length"
+     class="midi-controls">
+  <div class="midi-controls-inputs" *ngIf="synthesizer.midi.inputControllers.length">
+    <div class="midi-controller" *ngFor="let controller of synthesizer.midi.inputControllers"
+
+            [ngClass]="{active:(controller.active)}"
+    >
+      <div class="checkbox" [ngClass]="{active:(controller.active)}" (click)="controller.toggleActive()">
+        <div class="checkbox-icon">⎆</div>
+      </div>
+
+      {{controller.input.name}}<br>
+    </div>
+  </div>
+  <div class="midi-controls-outputs" *ngIf="synthesizer.midi.outputControllers.length">
+    <div class="midi-controller" *ngFor="let controller of synthesizer.midi.outputControllers"
+         [ngClass]="{active:(controller.active)}"
+    >
+
+      <div class="checkbox" [ngClass]="{active:(controller.active)}" (click)="controller.toggleActive()">
+        <div class="checkbox-icon">⎇</div>
+      </div>
+
+      {{controller.input.name}}<br>
+    </div>
+  </div>
+</div>

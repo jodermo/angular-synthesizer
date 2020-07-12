@@ -1,0 +1,284 @@
+@import "../../synthesizer.layout";
+
+
+.synthesizer-control {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+  margin: 0 auto;
+
+  filter: drop-shadow(0 0 $padding-small #000);
+
+
+  canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: none;
+    display: block;
+    z-index: 2;
+  }
+
+  .mouse-area {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    z-index: 3;
+  }
+
+
+  .synthesizer-control-title {
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    margin-top: $knob-gap;
+  }
+
+  .synthesizer-control-knob {
+    position: relative;
+    width: $knob-size;
+    height: $knob-size;
+    margin: $knob-size/1.5;
+    cursor: pointer;
+
+    .knob-value {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      pointer-events: none;
+
+      & > * {
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .knob-value-input {
+        position: absolute;
+        bottom: 165%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        pointer-events: all;
+
+        input {
+          text-align: center;
+          font-weight: bold;
+        }
+      }
+
+      .knob-value-min,
+      .knob-value-half,
+      .knob-value-max {
+        position: absolute;
+        font-size: $font-size-medium;
+
+        &:before {
+          content: '';
+          position: absolute;
+          width: $point-size;
+          height: $point-size;
+          background: $color-text-main;
+          border-radius: 50%;
+        }
+      }
+
+      .knob-value-min {
+        padding-right: $point-size * 2;
+        left: 0;
+        bottom: 0;
+        text-align: right;
+        transform: translateX(-100%) translateY(50%);
+
+        &:before {
+          top: 50%;
+          right: -$point-size;
+          transform: translateY(-50%);
+        }
+
+
+      }
+
+      .knob-value-half {
+        padding-bottom: $point-size;
+        position: absolute;
+        left: 50%;
+        top: -$point-size * 2;
+        transform: translateX(-50%) translateY(-100%);
+        text-align: center;
+
+        &:before {
+          bottom: -$point-size;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      .knob-value-max {
+        padding-left: $point-size * 2;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        text-align: left;
+        transform: translateX(100%) translateY(50%);
+
+        &:before {
+          top: 50%;
+          left: -$point-size;
+          transform: translateY(-50%);
+        }
+
+
+      }
+
+    }
+
+    .knob-node-value {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+
+      &.knob-node-1 {
+
+      }
+
+      &.knob-node-2 {
+
+      }
+
+      &.knob-node-3 {
+
+      }
+    }
+
+  }
+
+  .knob-nodes {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    margin-top: $knob-gap;
+    pointer-events: none;
+
+
+    .knob-node {
+      background: $color-background-secondary;
+      color: $color-text-secondary;
+      border: $border-secondary;
+      cursor: pointer;
+      margin: $node-gap;
+      height: $node-size;
+      width: $node-size;
+      border-radius: $node-size / 4;
+      pointer-events: all;
+      box-shadow: $node-shadow;
+
+      z-index: 4;
+
+      & > .inside {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+        text-align: center;
+        line-height: $node-size;
+        overflow: hidden;
+
+        .knob-node-source {
+          .source-type {
+            position: absolute;
+            width: 100%;
+            height: 80%;
+            top: -20%;
+            left: 0;
+            line-height: $node-size;
+            opacity: .5;
+            font-size: $font-size-small;
+            text-transform: uppercase;
+            color: $color-active-background-main;
+          }
+
+          .source-id {
+            position: absolute;
+            width: 100%;
+            height: 80%;
+            top: 20%;
+            left: 0;
+            line-height: $node-size;
+            font-size: $font-size-small;
+          }
+        }
+      }
+
+      &:hover {
+        background: $color-hover-background-secondary;
+        color: $color-hover-text-secondary;
+      }
+
+      &.active {
+        background: $color-active-background-secondary;
+        color: $color-active-text-secondary;
+        cursor: default;
+      }
+
+      &.knob-node-1 {
+
+      }
+
+      &.knob-node-2 {
+
+      }
+
+      &.knob-node-3 {
+
+      }
+    }
+  }
+
+  .synthesizer-control-slider {
+    position: absolute;
+    bottom: -$node-gap * 2;
+    width: 200%;
+    background: $color-background-secondary;
+    border: $border-secondary;
+    border-radius: $node-size / 4;
+    z-index: 10;
+    transform: translateX(-25%) translateY(100%);
+
+    .mat-slider {
+      padding: 0;
+      min-width: 100%;
+      height: $node-size;
+      z-index: 10;
+      pointer-events: all;
+    }
+
+  }
+
+  &.mouse-down {
+    z-index: 4;
+
+  }
+
+}
+
+.hidden {
+  width: 0;
+  height: 0;
+  position: absolute;
+  opacity: 0;
+  z-index: -10;
+  pointer-events: none;
+}
+
