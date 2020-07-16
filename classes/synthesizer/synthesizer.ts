@@ -1,4 +1,3 @@
-
 import { MIDIManager } from '../midi/midi-manager';
 import { SynthesizerLfo } from './synthesizer-modulator/synthesizer-modulators/synthesizer-lfo';
 import { SynthesizerManager } from './synthesizer-manager/synthesizer-manager';
@@ -27,7 +26,7 @@ export class Synthesizer {
   beatString;
 
 
-  manager: SynthesizerManager;
+  manager = new SynthesizerManager(this);
   midi = new MIDIManager(this);
   callbacks: any = {};
   audioContext: AudioContext;
@@ -57,7 +56,6 @@ export class Synthesizer {
     if (this.oscs.length) {
       this.oscs[0].active = true;
     }
-    this.manager = new SynthesizerManager();
 
 
   }
@@ -224,7 +222,7 @@ export class Synthesizer {
   }
 
   save() {
-    this.manager.saveSynthesizer(this);
+    this.manager.saveSynthesizer();
   }
 
   reset() {
@@ -336,12 +334,3 @@ export class Synthesizer {
 
 }
 
-export class SynthesizerSaveData {
-  volume = 1;
-  release = 250;
-  delay = 0;
-
-  oscs: any[] = [];
-  lfos: any[] = [];
-  sequencers: any[];
-}

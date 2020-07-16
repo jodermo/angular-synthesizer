@@ -19,7 +19,7 @@ import { AudioEffectNode } from '../../classes/audio-effect/audio-effect-node';
 export class SynthesizerControlComponent extends SynthesizerCanvasComponent implements OnChanges {
   @Input() synthesizer: Synthesizer;
   @Input() osc: SynthesizerOsc;
-  @Input() sourceNode: AudioEffectNode;
+  @Input() effectNode: AudioEffectNode;
   @Input() title;
   @Input() type = 'knob';
   @Input() min = 0;
@@ -42,7 +42,7 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent impl
   // tslint:disable-next-line:no-output-on-prefix
   @Output() onChange = new EventEmitter<number>();
   // tslint:disable-next-line:no-output-on-prefix
-  @Output() onConnectNode = new EventEmitter<AudioEffectNode>();
+  @Output() onConnectNode = new EventEmitter<AudioEffect>();
 
   layout: SynthesizerLayout = new SynthesizerLayout();
 
@@ -61,34 +61,16 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent impl
 
   ngOnChanges(changes: SimpleChanges) {
     super.ngOnChanges(changes);
-    this.addNotes();
   }
 
   onInit() {
-
     this.initMiddleValue();
-    this.addNotes();
-
   }
 
-
-  addNotes() {
-    if (this.sourceNode) {
-      let count = this.nodeCount;
-      if (this.sourceNode.effectNodes) {
-        count = this.nodeCount - this.sourceNode.effectNodes.length;
-      }
-      for (let i = 0; i < count; i++) {
-        // this.sourceNode.addNode();
-      }
-
-      this.ready = true;
-    }
-
-  }
 
   onChanges() {
-
+    this.initMiddleValue();
+    this.ready = true;
   }
 
   onMouseOver(event) {
@@ -115,28 +97,6 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent impl
     }
   }
 
-  addNode(source = null) {
-    if(this.sourceNode){
-      const node = this.sourceNode.addNode();
-      if (source) {
-        this.connectNodeSource(node, source);
-      }
-    }
-  }
-
-  connectNodeSource(node: AudioEffectNode, source: any) {
-    node.setSource(source);
-    if (this.synthesizer) {
-      this.synthesizer.connectNode = null;
-    }
-    this.onConnectNode.emit(node);
-  }
-
-
-  removeNode(node: AudioEffectNode) {
-    this.sourceNode.removeNode(node);
-  }
-
   initMiddleValue() {
     if (this.max < 0) {
       this.middleValue = (this.max + this.min) / 2;
@@ -149,13 +109,12 @@ export class SynthesizerControlComponent extends SynthesizerCanvasComponent impl
         this.middleValue = (this.max + this.min) / 2;
       }
     }
-    if (!this.outputMin && this.sourceNode && this.sourceNode.name === 'Pan') {
+    if (!this.outputMin && this.effectNode && this.effectNode.name === 'Pan') {
       this.outputMin = 'left';
       this.outputMiddle = 'center';
       this.outputMax = 'right';
     }
   }
-
 
   drawLegend() {
     const size = this.width / 2 - this.knobLegendSize;

@@ -1,74 +1,74 @@
-import { Synthesizer, SynthesizerSaveData } from '../synthesizer';
+
 import { SynthesizerLfo, SynthesizerLfoSaveData } from '../synthesizer-modulator/synthesizer-modulators/synthesizer-lfo';
 import { SynthesizerSequencer } from '../synthesizer-modulator/synthesizer-modulators/synthesizer-sequencer';
 import { SynthesizerOsc, SynthesizerOscSaveData } from '../synthesizer-osc/synthesizer-osc';
-
+import { SynthesizerSaveData } from '../save-data/save-data';
 
 export class SynthesizerManager {
   loading = false;
   saving = false;
 
-  constructor() {
+  constructor(public synthesizer) {
 
   }
 
 
-  loadSynthesizer(synthesizer: Synthesizer, saveData: SynthesizerSaveData) {
+  loadSynthesizer(saveData: SynthesizerSaveData) {
     for (const key in saveData) {
       if (key === 'oscs') {
         let osc: SynthesizerOsc;
         for (let i = 0; i < saveData[key].length; i++) {
-          if (!synthesizer.oscs[i]) {
-            osc = synthesizer.addOsc(i + 1);
+          if (!this.synthesizer.oscs[i]) {
+            osc = this.synthesizer.addOsc(i + 1);
           }
           // tslint:disable-next-line:forin
           for (const oscKey in saveData[key][i]) {
-            synthesizer.oscs[i][oscKey] = saveData[key][i][oscKey];
+            this.synthesizer.oscs[i][oscKey] = saveData[key][i][oscKey];
           }
-          synthesizer.oscs[i].update();
+          this.synthesizer.oscs[i].update();
         }
       } else if (key === 'lfos') {
         let lfo: SynthesizerLfo;
         for (let i = 0; i < saveData[key].length; i++) {
-          if (!synthesizer.lfos[i]) {
-            lfo = synthesizer.addLfo(i + 1);
+          if (!this.synthesizer.lfos[i]) {
+            lfo = this.synthesizer.addLfo(i + 1);
           }
           // tslint:disable-next-line:forin
           for (const lfoKey in saveData[key][i]) {
-            synthesizer.lfos[i][lfoKey] = saveData[key][i][lfoKey];
+            this.synthesizer.lfos[i][lfoKey] = saveData[key][i][lfoKey];
           }
-          synthesizer.lfos[i].update();
+          this.synthesizer.lfos[i].update();
         }
       } else if (key === 'sequencer') {
         let sequencer: SynthesizerSequencer;
         for (let i = 0; i < saveData[key].length; i++) {
-          if (!synthesizer.lfos[i]) {
-            sequencer = synthesizer.addSequencer(i + 1);
+          if (!this.synthesizer.lfos[i]) {
+            sequencer = this.synthesizer.addSequencer(i + 1);
           }
           // tslint:disable-next-line:forin
           for (const sequencerKey in saveData[key][i]) {
-            synthesizer.sequencers[i][sequencerKey] = saveData[key][i][sequencerKey];
+            this.synthesizer.sequencers[i][sequencerKey] = saveData[key][i][sequencerKey];
           }
-          synthesizer.sequencers[i].update();
+          this.synthesizer.sequencers[i].update();
         }
       } else {
-        synthesizer[key] = saveData[key];
+        this.synthesizer[key] = saveData[key];
       }
     }
-    synthesizer.do('onload', saveData);
+    this.synthesizer.do('onload', saveData);
   }
 
-  saveSynthesizer(synthesizer: Synthesizer) {
+  saveSynthesizer() {
     if (!this.saving && confirm('You want to save this modulation?')) {
       this.saving = true;
 
       const saveData = new SynthesizerSaveData();
       for (const key in saveData) {
         if (key !== 'lfos' && key !== 'oscs') {
-          saveData[key] = synthesizer[key];
+          saveData[key] = this.synthesizer[key];
         }
       }
-      for (const osc of synthesizer.oscs) {
+      for (const osc of this.synthesizer.oscs) {
         const saveDataOsc = new SynthesizerOscSaveData();
         // tslint:disable-next-line:forin
         for (const key in saveDataOsc) {
@@ -76,7 +76,7 @@ export class SynthesizerManager {
         }
         saveData.oscs.push(saveDataOsc);
       }
-      for (const lfo of synthesizer.lfos) {
+      for (const lfo of this.synthesizer.lfos) {
         const saveDataLfo = new SynthesizerLfoSaveData();
         // tslint:disable-next-line:forin
         for (const key in saveDataLfo) {
@@ -84,14 +84,14 @@ export class SynthesizerManager {
         }
         saveData.lfos.push(saveDataLfo);
       }
-      this.saveLocalStorage(synthesizer, saveData);
-      synthesizer.do('onsave', saveData);
+      this.saveLocalStorage(this.synthesizer, saveData);
+      this.synthesizer.do('onsave', saveData);
       alert('Modulation saved');
     }
 
   }
 
-  getLocalStorage(synthesizer: Synthesizer) {
+  getLocalStorage() {
     let savedData: any = localStorage.getItem('synthesizer-data');
     if (savedData) {
       savedData = JSON.parse(savedData);
@@ -121,15 +121,15 @@ export class SynthesizerManager {
           saveData.lfos.push(saveDataLfo);
         }
       }
-      this.loadSynthesizer(synthesizer, savedData);
+      this.loadSynthesizer(savedData);
     }
   }
 
-  saveLocalStorage(synthesizer: Synthesizer, saveData) {
+  saveLocalStorage(synthesizer: any, saveData) {
     localStorage.setItem('synthesizer-data', JSON.stringify(saveData));
   }
 
-  clearLocalStorage(synthesizer: Synthesizer) {
+  clearLocalStorage(synthesizer: any) {
     localStorage.removeItem('synthesizer-data');
   }
 

@@ -1,3 +1,4 @@
+import { SynthesizerModulator } from '../synthesizer/synthesizer-modulator/synthesizer-modulator';
 import { AudioEffectNode } from './audio-effect-node';
 
 export class AudioEffect {
@@ -30,7 +31,6 @@ export class AudioEffect {
   }
 
 
-
   getNode(name, param) {
     for (const effectNode of this.effectNodes) {
       if (effectNode.name === name && effectNode.param === param) {
@@ -47,13 +47,6 @@ export class AudioEffect {
     }
   }
 
-  addPercentValue(name, param, value) {
-    for (const effectNode of this.effectNodes) {
-      if (effectNode.name === name && effectNode.param === param) {
-        effectNode.addPercentValue(value);
-      }
-    }
-  }
 
   start() {
     if (!this.active) {
@@ -71,16 +64,11 @@ export class AudioEffect {
   }
 
   update() {
-    if (this.effectNodes) {
-      for (const effect of this.effectNodes) {
-        if (effect.source) {
-          console.log(effect);
-        }
-
+    if (this.effectNodes.length) {
+      for (const effectNode of this.effectNodes) {
+        effectNode.update();
       }
-
     }
-
   }
 
   createEffect() {

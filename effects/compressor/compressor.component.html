@@ -2,7 +2,7 @@
   <app-synthesizer-control *ngFor="let effect of compressor.effectNodes"
                            [synthesizer]="synthesizer"
                            [osc]="osc"
-                           [sourceNode]="effect"
+                           [effectNode]="effect"
                            [title]="effect.param"
                            [min]="effect.min"
                            [max]="effect.max"

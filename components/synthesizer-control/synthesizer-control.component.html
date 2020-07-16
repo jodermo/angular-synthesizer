@@ -33,26 +33,22 @@
       </div>
     </div>
   </div>
-  <div *ngIf="osc && synthesizer && sourceNode" class="knob-nodes" (mouseover)="showSlider = false">
-    <div *ngFor="let node of sourceNode.effectNodes; let i = index"
+
+  <div *ngIf="osc && synthesizer && effectNode" class="knob-nodes" (mouseover)="showSlider = false">
+
+    <div *ngFor="let modulator of effectNode.modulators; let i = index"
          class="knob-node knob-node-{{i+1}}"
-         [ngClass]="{hidden:(!node.source && !synthesizer.connectNode), active:(node.source)}"
+         [ngClass]="{hidden:(!modulator.active && !synthesizer.connectNode), active:(modulator.active)}"
     >
-      <div *ngIf="node.source" class="inside" (dblclick)="removeNode(node)">
-        <div class="knob-node-source" *ngIf="node.source">
-          <span class="source-type" *ngIf="node.source.type">{{node.source.type}}</span>
-          <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>
-        </div>
-      </div>
-      <div *ngIf="!node.source" class="inside" (click)="connectNodeSource(node, synthesizer.connectNode)">
-        <div class="knob-node-source" *ngIf="node.source">
-          <span class="source-type type-{{node.source.type}}" *ngIf="node.source.type">{{node.source.type}}</span>
-          <span class="source-id" *ngIf="node.source.id"> {{node.source.id}}</span>
+      <div class="inside" (dblclick)="effectNode.removeModulator(modulator)">
+        <div class="knob-node-source">
+          <span class="source-type" *ngIf="modulator.type">{{modulator.type}}</span>
+          <span class="source-id" *ngIf="modulator.id"> {{modulator.id}}</span>
         </div>
       </div>
     </div>
     <div class="knob-node knob-node-add" [ngClass]="{hidden:(!synthesizer.connectNode)}">
-      <div class="inside" (click)="addNode(synthesizer.connectNode)">
+      <div class="inside" (click)="effectNode.addModulator(synthesizer.connectNode); synthesizer.connectNode = null">
         <div class="knob-node-source">
           <span class="source-type">new</span>
           <span class="source-id">+</span>

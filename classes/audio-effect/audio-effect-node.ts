@@ -1,10 +1,12 @@
 import { SynthesizerModulator } from '../synthesizer/synthesizer-modulator/synthesizer-modulator';
 
 export class AudioEffectNode {
-  valueOnTop = 0;
-  totalValue = 0;
   source: SynthesizerModulator;
   effectNodes: AudioEffectNode[] = [];
+  modulators: SynthesizerModulator[] = [];
+  totalValue = 0;
+  modulatorsValue = 0;
+  modulatorsValues = [];
 
   constructor(
     public name,
@@ -45,6 +47,19 @@ export class AudioEffectNode {
     }
   }
 
+  addModulator(modulator: SynthesizerModulator) {
+    this.modulators.push(modulator);
+
+  }
+
+  removeModulator(modulator: SynthesizerModulator) {
+    for (let i = 0; i < this.modulators.length; i++) {
+      if (this.modulators[i] === modulator) {
+        this.modulators.splice(i, 1);
+      }
+    }
+  }
+
   setSource(source: SynthesizerModulator) {
     this.source = source;
   }
@@ -57,14 +72,18 @@ export class AudioEffectNode {
     return this.currentValue;
   }
 
-  addPercentValue(value: number) {
-    this.valueOnTop += (value * (this.max - this.min) / 100);
-    this.update();
-    return this.totalValue;
-  }
-
   update() {
-    let total = this.currentValue + this.valueOnTop;
+
+    this.modulatorsValue = 0;
+    this.modulatorsValues = [];
+    for (const modulator of this.modulators) {
+      if (modulator.active) {
+        this.modulatorsValue += modulator.currentValue;
+        this.modulatorsValues.push(modulator.currentValue);
+      }
+    }
+    const duration = (this.max - this.min) / 100;
+    let total = this.currentValue + (this.modulatorsValue * duration);
     if (total > this.max) {
       total = this.max;
     } else if (total < this.min) {
@@ -78,9 +97,8 @@ export class AudioEffectNode {
         this.effectNode[this.nodeAttr] = this.makeDistortionCurve(this.totalValue);
         this.effectNode.oversample = '4x';
       } else {
-        this.effectNode[this.param][this.nodeAttr] = this.totalValue;
+        // this.effectNode[this.param][this.nodeAttr] = this.totalValue;
       }
-
     }
   }
 

@@ -39,7 +39,7 @@ export class SynthesizerComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.synthesizer && this.synthesizer.manager) {
-      this.synthesizer.manager.getLocalStorage(this.synthesizer);
+      this.synthesizer.manager.getLocalStorage();
     }
   }
 

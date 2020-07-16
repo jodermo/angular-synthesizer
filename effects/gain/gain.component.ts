@@ -8,5 +8,5 @@ import { OscEffectComponent } from '../osc-effect/osc-effect.component';
   styleUrls: ['./gain.component.scss']
 })
 export class GainComponent extends OscEffectComponent {
-  @Input() gain: AudioGain;
+  @Input() audioGain: AudioGain;
 }

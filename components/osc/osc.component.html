@@ -11,7 +11,7 @@
     <app-gain
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [gain]="osc.audioGain"
+      [audioGain]="osc.audioGain"
       [ngClass]="{hidden:(!osc.active && !synthesizer.connectNode)}"
     ></app-gain>
     <app-pan

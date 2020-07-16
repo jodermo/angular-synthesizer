@@ -4,7 +4,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.highShelfNode"
+      [effectNode]="equalizer.highShelfNode"
       [title]="'kHz'"
       [min]="4700"
       [max]="22000"
@@ -15,7 +15,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.highShelfNode"
+      [effectNode]="equalizer.highShelfNode"
       [title]="'dB'"
       [min]="-50"
       [max]="50"
@@ -29,7 +29,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.lowShelfNode"
+      [effectNode]="equalizer.lowShelfNode"
       [title]="'kHz'"
       [min]="35"
       [max]="220"
@@ -40,7 +40,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.lowShelfNode"
+      [effectNode]="equalizer.lowShelfNode"
       [title]="'db'"
       [min]="-50"
       [max]="50"
@@ -54,7 +54,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.highPassNode"
+      [effectNode]="equalizer.highPassNode"
       [title]="'kHz'"
       [min]="800"
       [max]="5900"
@@ -65,7 +65,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.highPassNode"
+      [effectNode]="equalizer.highPassNode"
       [title]="'Q'"
       [min]="0.7"
       [max]="12"
@@ -79,7 +79,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.lowPassNode"
+      [effectNode]="equalizer.lowPassNode"
       [title]="'kHz'"
       [min]="60"
       [max]="1600"
@@ -90,7 +90,7 @@
     <app-synthesizer-control
       [synthesizer]="synthesizer"
       [osc]="osc"
-      [sourceNode]="equalizer.lowPassNode"
+      [effectNode]="equalizer.lowPassNode"
       [title]="'Q'"
       [min]="0.7"
       [max]="12"

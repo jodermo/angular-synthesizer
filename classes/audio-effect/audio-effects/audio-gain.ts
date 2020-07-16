@@ -4,11 +4,11 @@ import { AudioEffectNode } from '../audio-effect-node';
 export class AudioGain extends AudioEffect {
   name = 'Gain';
   gainNode;
+  gain;
 
   init() {
     this.gainNode = this.audioContext.createGain();
-
-    this.effectNodes.push(new AudioEffectNode(
+    this.gain = new AudioEffectNode(
       'gain', 'valueAtTime', 'vol',
       this.gainNode.gain.value,
       0, 1, .01,
@@ -16,7 +16,8 @@ export class AudioGain extends AudioEffect {
       this.audioContext,
       'gain',
       this.sampleRate
-    ));
+    );
+    this.effectNodes.push(this.gain);
   }
 
   connect() {

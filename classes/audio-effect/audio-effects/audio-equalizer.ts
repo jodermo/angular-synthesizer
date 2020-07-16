@@ -8,6 +8,7 @@ export class AudioEqualizer extends AudioEffect {
   highPassNode;
   lowPassNode;
 
+
   init() {
     this.highShelfNode = this.audioContext.createBiquadFilter();
     this.lowShelfNode = this.audioContext.createBiquadFilter();

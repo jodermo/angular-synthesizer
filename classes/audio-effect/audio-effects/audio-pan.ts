@@ -4,11 +4,11 @@ import { AudioEffectNode } from '../audio-effect-node';
 export class AudioPan extends AudioEffect {
   name = 'Pan';
   panNode;
+  pan;
 
   init() {
     this.panNode = this.audioContext.createStereoPanner();
-
-    this.effectNodes.push(new AudioEffectNode(
+    this.pan = new AudioEffectNode(
       'pan', 'valueAtTime', 'L/R',
       this.panNode.pan.value,
       -1, 1, .01,
@@ -16,7 +16,8 @@ export class AudioPan extends AudioEffect {
       this.audioContext,
       'pan',
       this.sampleRate
-    ));
+    );
+    this.effectNodes.push(this.pan);
   }
 
   connect() {
