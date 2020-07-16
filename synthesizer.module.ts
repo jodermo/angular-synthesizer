@@ -59,7 +59,19 @@ import { OscEffectComponent } from './effects/osc-effect/osc-effect.component';
     OscComponent,
     SynthesizerControlComponent,
     LfoComponent,
-    MidiControlsComponent
+    MidiControlsComponent,
+    SynthesizerCanvasComponent,
+    FrequencyFilterCanvasComponent,
+    WaveformCanvasComponent,
+    SequencerComponent,
+    SequencerCanvasComponent,
+    SynthesizerDisplayComponent,
+    EqualizerComponent,
+    PanComponent,
+    GainComponent,
+    DistortionComponent,
+    CompressorComponent,
+    OscEffectComponent
   ]
 })
 export class SynthesizerModule {
