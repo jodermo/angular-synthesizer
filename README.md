@@ -17,7 +17,6 @@ Modular Synthesizer • Angular • Web Audio API • Web MIDI API • MIDI Devi
 To integrate this module in your Angular project:
 ### Add import to `app/app.module.ts`
 
-beispiel
 
 ```javascript
   imports: [
